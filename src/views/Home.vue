@@ -1,13 +1,21 @@
 <template>
   <v-app id="inspire">
+    <v-col cols="12">
+        <v-row
+          align="center"
+          justify="center"
+          class="grey lighten-5"
+
+        >
     <v-item  v-for="value in data" :key="value.action" class="card">
       <Cards
-      
         :action="value.action"
         :cabecalho="value.cabecalho"
         :descritivo="value.descritivo"
         :tipo="value.tipo"/>
     </v-item>
+        </v-row>
+    </v-col>
   </v-app>
 </template>
 
@@ -27,8 +35,8 @@ import Cards from '../components/Cards';
           descritivo: 'Greyhound divisely hello coldly fonwderfully',
           tipo: 'Gerenciar'
         },
-        requisitar: {
-          action: '/requistar',
+        requisicao: {
+          action: '/requisicao',
           cabecalho: 'Requisição',
           descritivo: 'Greyhound divisely hello coldly fonwderfully',
           tipo: 'Gerenciar'
@@ -57,11 +65,5 @@ import Cards from '../components/Cards';
 </script>
 
 <style>
-.card{
-    /* display: flex; */
-/*    
-    display: flex;
-  justify-content: flex-start; */
 
-}
 </style>

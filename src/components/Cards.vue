@@ -44,7 +44,6 @@
 
 <style scoped>
 .card{
-  margin-left: 10px !important;
-  margin-right: 10px !important;
+  margin: 10px !important;
 }
 </style>
