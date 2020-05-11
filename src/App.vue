@@ -31,6 +31,8 @@
     >
       <v-app-bar-nav-icon @click.stop="drawer = !drawer" />
       <v-toolbar-title>Almoxarifado - Jhons</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <span style="text-align: right"> {{user}} </span>
     </v-app-bar>
 
 <router-view class="view"></router-view>
@@ -50,6 +52,7 @@
     },
     data: () => ({
       drawer: null,
+      user: 'Guilherme de Oliveira'
     }),
   }
 </script>

@@ -1,107 +1,148 @@
 <template>
    <v-app id="inspire">
-    <p>{{ titulo}}</p>
-
+    <h2>{{ titulo}}</h2>
     <v-col cols="12">
-      <!-- <div class="my-2">
-        <v-btn color="primary">Adicionar +</v-btn>
-      </div> -->
-                <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
-          </template>
-        <!-- <v-row
-          align="center"
-          justify="center"
-          class="grey lighten-5"
-        > -->
-    <!-- <v-item  v-for="value in data" :key="value.action" class="card">
-      <Cards
-        :action="value.action"
-        :cabecalho="value.cabecalho"
-        :descritivo="value.descritivo"
-        :tipo="value.tipo"/>
-    </v-item> -->
-<v-text-field
-        v-model="search"
-        append-icon="mdi-magnify"
-        label="Search"
-        single-line
-        hide-details
-      ></v-text-field>
- <v-data-table
-    :headers="headers"
-    :items="desserts"
-    sort-by="calories"
-    class="elevation-1"
-  >
-    <template v-slot:top>
-      <v-toolbar flat color="white">
-        <v-toolbar-title>My CRUD</v-toolbar-title>
-        <v-divider
-          class="mx-4"
-          inset
-          vertical
-        ></v-divider>
-        <v-spacer></v-spacer>
-        <v-dialog v-model="dialog" max-width="500px">
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
-          </template>
-          <v-card>
-            <v-card-title>
-              <span class="headline">{{ formTitle }}</span>
-            </v-card-title>
-
-            <v-card-text>
-              <v-container>
-                <v-row>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.name" label="Dessert name"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.calories" label="Calories"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.fat" label="Fat (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.carbs" label="Carbs (g)"></v-text-field>
-                  </v-col>
-                  <v-col cols="12" sm="6" md="4">
-                    <v-text-field v-model="editedItem.protein" label="Protein (g)"></v-text-field>
-                  </v-col>
-                </v-row>
-              </v-container>
-            </v-card-text>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-              <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-              <v-btn color="blue darken-1" text @click="save">Save</v-btn>
-            </v-card-actions>
-          </v-card>
-        </v-dialog>
-      </v-toolbar>
-    </template>
-    <template v-slot:item.actions="{ item }">
-      <v-icon
-        small
-        class="mr-2"
-        @click="editItem(item)"
+      <template v-slot:activator="{ on }">
+        <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
+      </template>
+      <v-col cols="12" sm="6">
+        <v-text-field
+          v-model="search"
+          append-icon="mdi-magnify"
+          label="Procurar"
+          solo
+          hide-details
+          max-size="300px"
+        ></v-text-field>
+      </v-col>
+      <v-data-table
+        :headers="headers"
+        :items="desserts"
+        :search="search"
+        sort-by="calories"
+        class="elevation-1"
       >
-        mdi-pencil
-      </v-icon>
-      <v-icon
-        small
-        @click="deleteItem(item)"
-      >
-        mdi-delete
-      </v-icon>
-    </template>
-    <template v-slot:no-data>
-      <v-btn color="primary" @click="initialize">Reset</v-btn>
-    </template>
-  </v-data-table>
+        <template v-slot:top>
+          <v-toolbar flat color="#F5F5F5">
+            <v-toolbar-title>Requisições</v-toolbar-title>
+            <v-divider
+              class="mx-4"
+              inset
+              vertical
+            ></v-divider>
+            <v-spacer></v-spacer>
+            <v-dialog v-model="dialog" max-width="500px">
+              <template v-slot:activator="{ on }">
+                <v-btn color="primary" dark class="mb-2" v-on="on">Novo Item</v-btn>
+              </template>
+              <v-card>
+                <v-card-title>
+                  <span class="headline">{{ formTitle }}</span>
+                </v-card-title>
+                <v-card-text>
+                  <v-container>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="editedItem.name" label="N Requisição"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-menu
+                          ref="menu"
+                          v-model="menu"
+                          :close-on-content-click="false"
+                          :return-value.sync="date"
+                          transition="scale-transition"
+                          offset-y
+                          min-width="290px"
+                        >
+                          <template v-slot:activator="{ on }">
+                            <v-text-field
+                              v-model="date"
+                              label="Picker in menu"
+                              v-on="on"
+                            ></v-text-field>
+                          </template>
+                          <v-date-picker v-model="date" no-title scrollable>
+                            <v-spacer></v-spacer>
+                            <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+                            <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
+                          </v-date-picker>
+                        </v-menu>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="editedItem.fat" label="Solicitante"></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <span>Item</span>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="editedItem.carbs" label="Código"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="editedItem.protein" label="Nome"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="2">
+                        <v-text-field v-model="editedItem.protein" label="Qtde"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="2">
+                        <v-btn class="mx-2" fab dark small color="primary">
+                          <v-icon dark>mdi-plus</v-icon>
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  <v-row>
+                    <v-simple-table dense>
+                      <template v-slot:default>
+                        <thead>
+                          <tr>
+                            <th class="text-left">Código</th>
+                            <th class="text-left">Nome</th>
+                            <th class="text-left">Qtde</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr v-for="item in reqItems" :key="item.nome">
+                            <td>{{ item.codigo }}</td>
+                            <td>{{ item.nome }}</td>
+                            <td>{{ item.quantidade }}</td>
+                          </tr>
+                        </tbody>
+                      </template>
+                    </v-simple-table>
+                  </v-row>
+                </v-container>
+              </v-card-text>
+
+                <v-card-actions>
+                  <v-spacer></v-spacer>
+                  <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
+                  <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </v-toolbar>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-icon
+            small
+            class="mr-2"
+            @click="editItem(item)"
+          >
+            mdi-pencil
+          </v-icon>
+          <v-icon
+            small
+            @click="deleteItem(item)"
+          >
+            mdi-delete
+          </v-icon>
+        </template>
+        <template v-slot:no-data>
+          <v-btn color="primary" @click="initialize">Reset</v-btn>
+        </template>
+      </v-data-table>
     </v-col>
   </v-app>
 </template>
@@ -116,6 +157,11 @@
     // },
     data: () => ({
       titulo: 'Requisição de Materiais',
+      search: '',
+            date: new Date().toISOString().substr(0, 10),
+      menu: false,
+      modal: false,
+      menu2: false,
       data: {
         consultar: {
           action: '/consultar',
@@ -145,16 +191,16 @@
       dialog: false,
       headers: [
         {
-          text: 'Dessert (100g serving)',
+          text: 'N requisição',
           align: 'start',
           sortable: false,
-          value: 'name',
+          value: 'requisicao',
         },
-        { text: 'Calories', value: 'calories' },
-        { text: 'Fat (g)', value: 'fat' },
-        { text: 'Carbs (g)', value: 'carbs' },
-        { text: 'Protein (g)', value: 'protein' },
-        { text: 'Actions', value: 'actions', sortable: false },
+        { text: 'Data', value: 'data' },
+        { text: 'Solicitante', value: 'solicitante' },
+        { text: 'Qtde', value: 'quantidade' },
+        { text: 'Status', value: 'status' },
+        { text: 'Ação', value: 'actions', sortable: false },
       ],
       desserts: [],
       editedIndex: -1,
@@ -172,11 +218,33 @@
         carbs: 0,
         protein: 0,
       },
+       reqItems: [
+          {
+            codigo: 1,
+            nome: 'Frozen Yogurt',
+            quantidade: 159,
+          },
+          {
+            codigo: 1,
+            nome: 'Frozen Yogurt',
+            quantidade: 159,
+          },
+          {
+            codigo: 1,
+            nome: 'Frozen Yogurt',
+            quantidade: 159,
+          },
+          {
+            codigo: 1,
+            nome: 'Frozen Yogurt',
+            quantidade: 159,
+          },
+        ],
     }),
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'New Item' : 'Edit Item'
+        return this.editedIndex === -1 ? 'Novo Item' : 'Editar Item'
       },
     },
 
@@ -194,74 +262,74 @@
       initialize () {
         this.desserts = [
           {
-            name: 'Frozen Yogurt',
-            calories: 159,
-            fat: 6.0,
-            carbs: 24,
-            protein: 4.0,
+            requisicao: 'A01',
+            data: '13/12/2020',
+            solicitante: 'Albert',
+            quantidade: 2,
+            status: 'fechado',
           },
           {
-            name: 'Ice cream sandwich',
-            calories: 237,
-            fat: 9.0,
-            carbs: 37,
-            protein: 4.3,
+            requisicao: 'A01',
+            data: '13/12/2020',
+            solicitante: 'Albert',
+            quantidade: 2,
+            status: 'aberto',
           },
           {
-            name: 'Eclair',
-            calories: 262,
-            fat: 16.0,
-            carbs: 23,
-            protein: 6.0,
+            requisicao: 'A01',
+            data: '13/12/2020',
+            solicitante: 'Albert',
+            quantidade: 2,
+            status: 'aberto',
           },
           {
-            name: 'Cupcake',
-            calories: 305,
-            fat: 3.7,
-            carbs: 67,
-            protein: 4.3,
+            requisicao: 'A01',
+            data: '13/12/2020',
+            solicitante: 'Albert',
+            quantidade: 2,
+            status: 'aberto',
           },
           {
-            name: 'Gingerbread',
-            calories: 356,
-            fat: 16.0,
-            carbs: 49,
-            protein: 3.9,
+            requisicao: 'A01',
+            data: '13/12/2020',
+            solicitante: 'Albert',
+            quantidade: 2,
+            status: 'aberto',
           },
           {
-            name: 'Jelly bean',
-            calories: 375,
-            fat: 0.0,
-            carbs: 94,
-            protein: 0.0,
+            requisicao: 'A01',
+            data: '13/12/2020',
+            solicitante: 'Albert',
+            quantidade: 2,
+            status: 'aberto',
           },
           {
-            name: 'Lollipop',
-            calories: 392,
-            fat: 0.2,
-            carbs: 98,
-            protein: 0,
+            requisicao: 'A01',
+            data: '13/12/2020',
+            solicitante: 'Albert',
+            quantidade: 2,
+            status: 'aberto',
           },
           {
-            name: 'Honeycomb',
-            calories: 408,
-            fat: 3.2,
-            carbs: 87,
-            protein: 6.5,
+            requisicao: 'A01',
+            data: '13/12/2020',
+            solicitante: 'Albert',
+            quantidade: 2,
+            status: 'aberto',
           },
           {
-            name: 'Donut',
-            calories: 452,
-            fat: 25.0,
-            carbs: 51,
-            protein: 4.9,
+            requisicao: 'A01',
+            data: '13/12/2020',
+            solicitante: 'Albert',
+            quantidade: 2,
+            status: 'aberto',
           },
           {
-            name: 'KitKat',
-            calories: 518,
-            fat: 26.0,
-            carbs: 65,
-            protein: 7,
+            requisicao: 'A01',
+            data: '13/12/2020',
+            solicitante: 'Albert',
+            quantidade: 2,
+            status: 'aberto',
           },
         ]
       },
@@ -274,7 +342,7 @@
 
       deleteItem (item) {
         const index = this.desserts.indexOf(item)
-        confirm('Are you sure you want to delete this item?') && this.desserts.splice(index, 1)
+        confirm('Deletar Item?') && this.desserts.splice(index, 1)
       },
 
       close () {
@@ -296,3 +364,9 @@
     }
   } 
 </script>
+<style>
+ h2{
+   margin-left: 70px;
+ }
+ 
+</style>
