@@ -10,10 +10,9 @@
         <v-list-item-subtitle> {{ descritivo }} </v-list-item-subtitle>
       </v-list-item-content>
 
-      <v-list-item-avatar
-        size="80"
-        color="grey"
-      ></v-list-item-avatar>
+      <v-list-item-avatar size="80" color="#F5F5F5">
+        <v-icon large> {{ icone }} </v-icon>
+      </v-list-item-avatar>
     </v-list-item>
 
     <v-card-actions>
@@ -31,6 +30,7 @@
       cabecalho: String,
       descritivo: String,
       tipo: String,
+      icone: String,
     },
     data: () => ({
       // action: '/usuario',

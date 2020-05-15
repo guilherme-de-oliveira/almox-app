@@ -14,10 +14,10 @@
                 </router-link>
             </v-list-item-title>
         </v-list-item>
-        <v-list-item link>
+        <v-list-item link v-for="item in data" :key="item.action">
             <v-list-item-title>
-                <router-link to="./requisicao">
-                    Requisicao
+                <router-link :to="item.action">
+                    {{ item.cabecalho }}
                 </router-link>
             </v-list-item-title>
         </v-list-item>
@@ -52,7 +52,58 @@
     },
     data: () => ({
       drawer: null,
-      user: 'Guilherme de Oliveira'
+      user: 'Guilherme de Oliveira',
+      data: {
+        fabricante: {
+          action: '/fabricante',
+          cabecalho: 'Fabricante',
+          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          tipo: 'Gerenciar'
+        },
+        grupoMaterial: {
+          action: '/grupoMaterial',
+          cabecalho: 'Grupo de Material',
+          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          tipo: 'Gerenciar'
+        },
+        inventario: {
+          action: '/inventario',
+          cabecalho: 'Inventário',
+          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          tipo: 'Gerenciar'
+        },
+        local: {
+          action: '/local',
+          cabecalho: 'Local de Armazenamento',
+          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          tipo: 'Gerenciar'
+        },
+        material: {
+          action: '/material',
+          cabecalho: 'Material',
+          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          tipo: 'Gerenciar'
+        },
+        requisicao: {
+          action: '/requisicao',
+          cabecalho: 'Requisição',
+          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          tipo: 'Gerenciar'
+        },
+
+        solicitacaoMaterial: {
+          action: '/solicitacaoMaterial',
+          cabecalho: 'Solicitaçao de Material',
+          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          tipo: 'Gerenciar'
+        },
+        usuario: {
+          action: '/usuario',
+          cabecalho: 'Usuário',
+          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          tipo: 'Gerenciar'
+        },
+      },
     }),
   }
 </script>
