@@ -4,6 +4,7 @@ import VueRouter from 'vue-router';
 import Requisicao from './views/Requisicao.vue';
 import Home from './views/Home.vue';
 import Usuario from './views/Usuario.vue';
+import Fabricante from './views/Fabricante.vue';
 
 
 Vue.use(VueRouter);
@@ -24,6 +25,11 @@ export default new VueRouter({
             path: '/usuario',
             name: 'usuario',
             component: Usuario
+        },
+        {
+            path: '/fabricante',
+            name: 'fabricante',
+            component: Fabricante
         },
     ]
 });
