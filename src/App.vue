@@ -4,9 +4,8 @@
   <v-app id="inspire">
     <v-navigation-drawer
       v-model="drawer"
-      app
-    >
-     <v-list dense>
+      app>
+      <v-list dense>
         <v-list-item link>
             <v-list-item-title>
                 <router-link to="./">
@@ -16,9 +15,10 @@
         </v-list-item>
         <v-list-item link v-for="item in data" :key="item.action">
             <v-list-item-title>
-                <router-link :to="item.action">
-                    {{ item.cabecalho }}
-                </router-link>
+              <v-icon large> {{ item.icone }} </v-icon>
+              <router-link :to="item.action">
+                {{ item.cabecalho }}
+              </router-link>
             </v-list-item-title>
         </v-list-item>
       </v-list>
@@ -58,52 +58,66 @@
           action: '/fabricante',
           cabecalho: 'Fabricante',
           descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
+          tipo: 'Gerenciar',
+          icone: 'mdi-hard-hat',
         },
         grupoMaterial: {
           action: '/grupoMaterial',
           cabecalho: 'Grupo de Material',
           descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
+          tipo: 'Gerenciar',
+          icone: 'mdi-group',
         },
         inventario: {
           action: '/inventario',
           cabecalho: 'Inventário',
           descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
+          tipo: 'Gerenciar',
+          icone: 'mdi-not-equal',
         },
         local: {
           action: '/local',
           cabecalho: 'Local de Armazenamento',
           descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
+          tipo: 'Gerenciar',
+          icone: 'mdi-parachute'
         },
         material: {
           action: '/material',
           cabecalho: 'Material',
           descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
+          tipo: 'Gerenciar',
+          icone: 'mdi-puzzle'
         },
         requisicao: {
           action: '/requisicao',
           cabecalho: 'Requisição',
           descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
+          tipo: 'Gerenciar',
+          icone: 'mdi-pen',
         },
 
         solicitacaoMaterial: {
           action: '/solicitacaoMaterial',
           cabecalho: 'Solicitaçao de Material',
           descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
+          tipo: 'Gerenciar',
+          icone: 'mdi-book-open',
         },
         usuario: {
           action: '/usuario',
           cabecalho: 'Usuário',
           descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
+          tipo: 'Gerenciar',
+          icone: 'mdi-account',
         },
-      },
+     // estoque: {
+        //   action: '/estoque',
+        //   cabecalho: 'Estoque',
+        //   descritivo: 'Greyhound divisely hello coldly fonwderfully',
+        //   tipo: 'Gerenciar'
+        // },
+      }
     }),
   }
 </script>
