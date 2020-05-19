@@ -5,7 +5,8 @@ import Requisicao from './views/Requisicao.vue';
 import Home from './views/Home.vue';
 import Usuario from './views/Usuario.vue';
 import Fabricante from './views/Fabricante.vue';
-import Grupo_Material from './views/Grupo_Material.vue'
+import Grupo_Material from './views/Grupo_Material.vue';
+import Inventario from './views/Inventario.vue';
 
 Vue.use(VueRouter);
 
@@ -35,6 +36,11 @@ export default new VueRouter({
             path: '/grupoMaterial',
             name: 'grupoMaterial',
             component: Grupo_Material
+        },
+        {
+            path: '/inventario',
+            name: 'inventario',
+            component: Inventario
         },
     ]
 });
