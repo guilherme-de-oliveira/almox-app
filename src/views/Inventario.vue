@@ -118,11 +118,39 @@
                 </v-card-actions>
               </v-card>
             </v-dialog>
-            <!-- Dialog Full -->
+          </v-toolbar>
+        </template>
+        <template v-slot:item.actions="{ item }">
+          <v-icon
+            small
+            class="mr-2"
+            @click="editItem(item)"
+          >
+            mdi-pencil
+          </v-icon>
+          <v-icon
+            small
+            class="mr-2"
+            @click="deleteItem(item)"
+          >
+            mdi-delete
+          </v-icon>
+        </template>
+        <template v-slot:item.open="{ item }">
+ 
+                      <!-- Dialog Full -->
             <v-dialog v-model="dialogFull" max-width="500px">
                 opa
             <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark v-on="on">Open Dialog</v-btn>
+            <!-- <v-btn color="primary" dark v-on="on">Open Dialog</v-btn> -->
+            
+            <v-icon
+                small
+                @click="abrirItem(item)"
+                v-on="on"
+            >
+            mdi-eye
+          </v-icon>
             </template>
               <v-card>
                 <v-card-title>
@@ -201,32 +229,6 @@
               </v-card-text>
               </v-card>
             </v-dialog>
-
-          </v-toolbar>
-        </template>
-        <template v-slot:item.actions="{ item }">
-          <v-icon
-            small
-            class="mr-2"
-            @click="editItem(item)"
-          >
-            mdi-pencil
-          </v-icon>
-          <v-icon
-            small
-            class="mr-2"
-            @click="deleteItem(item)"
-          >
-            mdi-delete
-          </v-icon>
-        </template>
-        <template v-slot:item.open="{ item }">
-            <v-icon
-                small
-                @click="openItem(item)"
-            >
-            mdi-eye
-          </v-icon>
         </template>
         <template v-slot:no-data>
           <v-btn color="primary" @click="initialize">Reset</v-btn>
@@ -258,7 +260,7 @@
         { text: 'Data', value: 'data' },
         { text: 'Status', value: 'status' },
         { text: 'Ação', value: 'actions', sortable: false },
-        { text: 'Ação', value: 'open', sortable: false },
+        { text: 'Exibir', value: 'open', sortable: false },
       ],
       desserts: [],
       editedIndex: -1,
