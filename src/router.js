@@ -7,6 +7,7 @@ import Usuario from './views/Usuario.vue';
 import Fabricante from './views/Fabricante.vue';
 import Grupo_Material from './views/Grupo_Material.vue';
 import Inventario from './views/Inventario.vue';
+import Local_Armazenamento from './views/Local_Armazenamento.vue';
 
 Vue.use(VueRouter);
 
@@ -41,6 +42,11 @@ export default new VueRouter({
             path: '/inventario',
             name: 'inventario',
             component: Inventario
+        },
+        {
+            path: '/local',
+            name: 'local',
+            component: Local_Armazenamento
         },
     ]
 });
