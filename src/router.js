@@ -9,6 +9,7 @@ import Grupo_Material from './views/Grupo_Material.vue';
 import Inventario from './views/Inventario.vue';
 import Local_Armazenamento from './views/Local_Armazenamento.vue';
 import Material from './views/Material.vue';
+import Solicitacao_Material from './views/Solicitacao_Material.vue';
 
 Vue.use(VueRouter);
 
@@ -53,6 +54,11 @@ export default new VueRouter({
             path: '/material',
             name: 'material',
             component: Material
+        },
+        {
+            path: '/solicitacaoMaterial',
+            name: 'solicitacaoMaterial',
+            component: Solicitacao_Material
         },
     ]
 });
