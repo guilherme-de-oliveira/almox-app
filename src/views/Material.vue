@@ -42,17 +42,28 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="6" md="3">
+                      <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.name" label="Cod Material"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="3">
+                      <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.fat" label="Un Medida"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="3">
+                      <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.carbs" label="Classificação"></v-text-field>
                       </v-col>
+                    </v-row>
+                    <v-row>
                       <v-col cols="12" sm="6" md="3">
-                        <v-text-field v-model="editedItem.protein" label="Estoque"></v-text-field>
+                        <v-text-field v-model="editedItem.protein" label="Quantidade"></v-text-field>
+                      </v-col>  
+                      <v-col cols="12" sm="6" md="3">
+                        <v-text-field v-model="editedItem.fat" label="Estoque"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="3">
+                        <v-text-field v-model="editedItem.carbs" label="Estoque Min"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="3">
+                        <v-text-field v-model="editedItem.protein" label="Estoque Seg"></v-text-field>
                       </v-col>  
                     </v-row>
                     <v-row>
