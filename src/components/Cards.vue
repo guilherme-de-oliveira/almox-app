@@ -11,7 +11,7 @@
       </v-list-item-content>
 
       <v-list-item-avatar size="80" color="#F5F5F5">
-        <v-icon large> {{ icone }} </v-icon>
+        <v-icon :color="color" large> {{ icone }} </v-icon>
       </v-list-item-avatar>
     </v-list-item>
 
@@ -28,6 +28,7 @@
     props: {
       action: String,
       cabecalho: String,
+      color: String,
       descritivo: String,
       tipo: String,
       icone: String,

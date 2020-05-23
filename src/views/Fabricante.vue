@@ -33,7 +33,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on">Novo Item</v-btn>
+                <v-btn color="primary" dark class="mb-2" v-on="on">+ Novo</v-btn>
               </template>
               <v-card>
                 <v-card-title>
@@ -85,8 +85,8 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                  <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                  <v-btn color="error darken-1" text @click="close">Cancelar</v-btn>
+                  <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -124,32 +124,6 @@
       menu: false,
       modal: false,
       menu2: false,
-      data: {
-        consultar: {
-          action: '/consultar',
-          cabecalho: 'Consultar',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
-        },
-        adicionar: {
-          action: '/adicionar',
-          cabecalho: 'Home',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
-        },
-        alterar: {
-          action: '/alterar',
-          cabecalho: 'Requisição',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
-        },
-        pesquisar: {
-          action: '/pesquisar',
-          cabecalho: 'Inventário',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
-        },
-      },
       dialog: false,
       headers: [
         {
@@ -191,7 +165,7 @@
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Novo Item' : 'Editar Item'
+        return this.editedIndex === -1 ? 'Novo' : 'Editar'
       },
     },
 

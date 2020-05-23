@@ -33,7 +33,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on">Novo Item</v-btn>
+                <v-btn color="primary" dark class="mb-2" v-on="on">+ Novo</v-btn>
               </template>
               <v-card>
                 <v-card-title>
@@ -64,7 +64,7 @@
                           </template>
                           <v-date-picker v-model="date" no-title scrollable>
                             <v-spacer></v-spacer>
-                            <v-btn text color="primary" @click="menu = false">Cancel</v-btn>
+                            <v-btn text color="error" @click="menu = false">Cancelar</v-btn>
                             <v-btn text color="primary" @click="$refs.menu.save(date)">OK</v-btn>
                           </v-date-picker>
                         </v-menu>
@@ -120,8 +120,8 @@
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="blue darken-1" text @click="close">Cancel</v-btn>
-                  <v-btn color="blue darken-1" text @click="save">Save</v-btn>
+                  <v-btn color="error darken-1" text @click="close">Cancelar</v-btn>
+                  <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
                 </v-card-actions>
               </v-card>
             </v-dialog>
@@ -159,7 +159,7 @@
     //     Cards
     // },
     data: () => ({
-      titulo: 'Solicitação de Materiais',
+      titulo: 'Solicitação de Compra',
       search: '',
             date: new Date().toISOString().substr(0, 10),
       menu: false,
@@ -221,7 +221,7 @@
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Novo Item' : 'Editar Item'
+        return this.editedIndex === -1 ? 'Novo' : 'Editar'
       },
     },
 

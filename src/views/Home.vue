@@ -9,6 +9,7 @@
           <Cards
             :action="value.action"
             :cabecalho="value.cabecalho"
+            :color="value.color"
             :descritivo="value.descritivo"
             :tipo="value.tipo"
             :icone="value.icone"/>
@@ -31,57 +32,64 @@ import Cards from '../components/Cards';
         fabricante: {
           action: '/fabricante',
           cabecalho: 'Fabricante',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          color: 'yellow darken-2',
+          descritivo: 'Parceiros que nos ajudam a constuír nossos produtos.',
           tipo: 'Gerenciar',
           icone: 'mdi-hard-hat',
         },
         grupoMaterial: {
           action: '/grupoMaterial',
           cabecalho: 'Grupo de Material',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          color: "green darken-2",
+          descritivo: 'Metal, plástico, escritório e mais.',
           tipo: 'Gerenciar',
           icone: 'mdi-group',
         },
         inventario: {
           action: '/inventario',
           cabecalho: 'Inventário',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          color:"red darken-2",
+          descritivo: 'Listagem completa de todos os produtos armazenados.',
           tipo: 'Gerenciar',
           icone: 'mdi-not-equal',
         },
         local: {
           action: '/local',
           cabecalho: 'Local de Armazenamento',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          color: 'deep-purple darken-2',
+          descritivo: 'Locais inteligentes para armazenamento de insumos',
           tipo: 'Gerenciar',
           icone: 'mdi-parachute'
         },
         material: {
           action: '/material',
           cabecalho: 'Material',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          color: 'cyan darken-2',
+          descritivo: 'Itens a ingressarem à produção ou serem comercializados',
           tipo: 'Gerenciar',
           icone: 'mdi-puzzle'
         },
         requisicao: {
           action: '/requisicao',
           cabecalho: 'Requisição',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          color: 'brown darken-2',
+          descritivo: 'Requisição de materiais feita por um setor',
           tipo: 'Gerenciar',
           icone: 'mdi-pen',
         },
 
         solicitacaoMaterial: {
           action: '/solicitacaoMaterial',
-          cabecalho: 'Solicitaçao de Material',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          cabecalho: 'Solicitaçao de Compra',
+          color: 'teal darken-2',
+          descritivo: 'Solicitação de material que atingiram em estoque mínimo',
           tipo: 'Gerenciar',
           icone: 'mdi-book-open',
         },
         usuario: {
           action: '/usuario',
           cabecalho: 'Usuário',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
+          descritivo: 'Colaboradores que interagem com o sistema',
           tipo: 'Gerenciar',
           icone: 'mdi-account',
         },
