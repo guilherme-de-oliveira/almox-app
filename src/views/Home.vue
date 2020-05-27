@@ -55,7 +55,7 @@ import Cards from '../components/Cards';
         },
         local: {
           action: '/local',
-          cabecalho: 'Local de Armazenamento',
+          cabecalho: 'Local Armazenamento',
           color: 'deep-purple darken-2',
           descritivo: 'Locais inteligentes para armazenamento de insumos',
           tipo: 'Gerenciar',
@@ -80,7 +80,7 @@ import Cards from '../components/Cards';
 
         solicitacaoMaterial: {
           action: '/solicitacaoMaterial',
-          cabecalho: 'Solicitaçao de Compra',
+          cabecalho: 'Solicitação Compra',
           color: 'teal darken-2',
           descritivo: 'Solicitação de material que atingiram em estoque mínimo',
           tipo: 'Gerenciar',

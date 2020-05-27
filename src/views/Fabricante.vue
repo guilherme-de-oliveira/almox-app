@@ -17,7 +17,7 @@
       </v-col>
       <v-data-table
         :headers="headers"
-        :items="desserts"
+        :items="data"
         :search="search"
         sort-by="calories"
         class="elevation-1"
@@ -45,8 +45,16 @@
                       <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.name" label="CNPJ"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="8">
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="7">
                         <v-text-field v-model="editedItem.fat" label="Nome"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="2">
+                        <v-text-field v-model="editedItem.fat" label="DDD"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="3">
+                        <v-text-field v-model="editedItem.fat" label="Telefone"></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -116,6 +124,9 @@
 </template>
 
 <script>
+// import System-Management from 'service/.js'
+import Fabricante from '../services/Fabricante.js';
+
   export default {
     data: () => ({
       titulo: 'Fabricante',
@@ -137,7 +148,7 @@
         { text: 'Endereço', value: 'endereco' },
         { text: 'Ação', value: 'actions', sortable: false },
       ],
-      desserts: [],
+      data: [],
       editedIndex: -1,
       editedItem: {
         name: '',
@@ -153,7 +164,7 @@
         carbs: 0,
         protein: 0,
       },
-       reqItems: [
+       reqItems: [ //Add new Items to list
           {
             cnpj: 1,
             nome: 'Frozen Yogurt',
@@ -175,61 +186,26 @@
       },
     },
 
-    created () {
-      this.initialize()
+    async mounted() {
+      try {
+        // const resources = await SystemManagement.TaskService.getAlltickets()
+        let resources = await Fabricante.DataService.getFabricantes();
+        this.data = resources;
+      } catch(error) {
+        console.log(error);
+      }
     },
 
     methods: {
-      initialize () {
-        this.desserts = [
-          {
-            cnpj: 'A01',
-            nome: '13/12/2020',
-            razaoSocial: 'Albert',
-            endereco: 2,
-          },
-          {
-            cnpj: 'A01',
-            nome: '13/12/2020',
-            razaoSocial: 'Albert',
-            endereco: 2,
-          },
-          {
-            cnpj: 'A01',
-            nome: '13/12/2020',
-            razaoSocial: 'Albert',
-            endereco: 2,
-          },
-          {
-            cnpj: 'A01',
-            nome: '13/12/2020',
-            razaoSocial: 'Albert',
-            endereco: 2,
-          },
-          {
-            cnpj: 'A01',
-            nome: '13/12/2020',
-            razaoSocial: 'Albert',
-            endereco: 2,
-          },
-         {
-            cnpj: 'A01',
-            nome: '13/12/2020',
-            razaoSocial: 'Albert',
-            endereco: 2,
-          },
-        ]
-      },
-
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Deletar Item?') && this.desserts.splice(index, 1)
+        const index = this.data.indexOf(item)
+        confirm('Deletar Item?') && this.data.splice(index, 1)
       },
 
       close () {
@@ -242,9 +218,9 @@
 
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
+          Object.assign(this.data[this.editedIndex], this.editedItem)
         } else {
-          this.desserts.push(this.editedItem)
+          this.data.push(this.editedItem)
         }
         this.close()
       },
