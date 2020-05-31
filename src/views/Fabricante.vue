@@ -203,7 +203,7 @@ import Fabricante from '../services/Fabricante.js';
         confirm('Deletar Item?');
         try{
             console.log(this.editedItem);
-            let response = Fabricante.DataService.deletFabricante();
+            let response = Fabricante.DataService.deleteFabricante();
             this.data.splice(index, 1)
             alert("Response: ", response);
         } catch (err) {

@@ -40,5 +40,23 @@
             "ddd": 15,
             "telefone": "9999-9999"
         }
+    ],
+    "grupoMaterial":[
+        {
+          "idGrupo": "A01",
+          "descricao": "13/12/2020"
+        },
+        {
+            "idGrupo": "A02",
+            "descricao": "13/12/2020"
+        },
+        {
+            "idGrupo": "A03",
+            "descricao": "13/12/2020"
+          },
+          {
+            "idGrupo": "A04",
+            "descricao": "13/12/2020"
+          }
     ]
 }

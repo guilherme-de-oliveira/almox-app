@@ -18,10 +18,10 @@ import mockData from './mock-data.json';
 // }
 
 class DataService {
-    static getFabricantes() {
+    static getGrupos() {
         return new Promise( (resolve, reject) => { //retirei o ASYNC
             try {
-                const res = mockData.fabricantes;
+                const res = mockData.grupoMaterial;
                 console.log(res);
                 resolve (res);
             } catch(err) {
@@ -30,7 +30,7 @@ class DataService {
         })
     }
 
-    static setFabricante() {
+    static setGrupo() {
         return new Promise((resolve, reject) => {
             try {
                 const res = "Cadastrado!";
@@ -41,7 +41,7 @@ class DataService {
         })
     }
 
-    static updateFabricante() {
+    static updateGrupo() {
         return new Promise((resolve, reject) => {
             try {
                 const res = "Atualizado!";
@@ -52,7 +52,7 @@ class DataService {
         })
     }
 
-    static deleteFabricante() {
+    static deleteGrupo() {
         return new Promise((resolve, reject) => {
             try {
                 const res = "Deletado!";

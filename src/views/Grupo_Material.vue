@@ -17,7 +17,7 @@
       </v-col>
       <v-data-table
         :headers="headers"
-        :items="desserts"
+        :items="data"
         :search="search"
         sort-by="calories"
         class="elevation-1"
@@ -42,11 +42,14 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-text-field v-model="editedItem.name" label="idGrupo"></v-text-field>
+                      <v-col cols="12" sm="6" md="3" v-if="editedIndex == -1">
+                        <v-text-field v-model="editedItem.idGrupo" label="idGrupo" disabled></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="3" v-else>
+                        <v-text-field v-model="editedItem.idGrupo" label="idGrupo"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="7">
-                        <v-text-field v-model="editedItem.fat" label="descricao"></v-text-field>
+                        <v-text-field v-model="editedItem.descricao" label="descricao"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2">
                         <v-btn class="mx-2" fab dark small color="primary">
@@ -54,27 +57,8 @@
                         </v-btn>
                       </v-col>
                     </v-row>
-                  <v-row>
-                    <v-simple-table dense>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-left">ID Grupo</th>
-                            <th class="text-left">Descrição</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="item in reqItems" :key="item.idGrupo">
-                            <td>{{ item.idGrupo }}</td>
-                            <td>{{ item.descricao }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-row>
-                </v-container>
-              </v-card-text>
-
+                  </v-container>
+                </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
                   <v-btn color="error darken-1" text @click="close">CancelR</v-btn>
@@ -99,15 +83,17 @@
             mdi-delete
           </v-icon>
         </template>
-        <template v-slot:no-data>
+        <!-- <template v-slot:no-data>
           <v-btn color="primary" @click="initialize">Reset</v-btn>
-        </template>
+        </template> -->
       </v-data-table>
     </v-col>
   </v-app>
 </template>
 
 <script>
+import Grupo_Material from '../services/Grupo_Material.js';
+
   export default {
     data: () => ({
       titulo: 'Grupo de Materiais',
@@ -124,29 +110,18 @@
           value: 'idGrupo',
         },
         { text: 'Descricao', value: 'descricao' },
+        { text: 'Ação', value: 'actions', sortable: false },
       ],
-      desserts: [],
+      data: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        idGrupo: '',
+        descricao: '',
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        idGrupo: '',
+        descricao: 0,
       },
-       reqItems: [
-          {
-            idGrupo: 1,
-            descricao: 'Frozen Yogurt',
-          },
-        ],
     }),
 
     computed: {
@@ -161,49 +136,38 @@
       },
     },
 
-    created () {
-      this.initialize()
+    async mounted() {
+      try {
+        // const resources = await SystemManagement.TaskService.getAlltickets()
+        let resources = await Grupo_Material.DataService.getGrupos();
+        this.data = resources;
+      } catch(error) {
+        console.log(error);
+      }
     },
 
     methods: {
-      initialize () {
-        this.desserts = [
-          {
-            idGrupo: 'A01',
-            descricao: '13/12/2020',
-          },
-          {
-            idGrupo: 'A01',
-            descricao: '13/12/2020',
-          },
-          {
-            idGrupo: 'A01',
-            descricao: '13/12/2020',
-          },
-          {
-            idGrupo: 'A01',
-            descricao: '13/12/2020',
-          },
-          {
-            idGrupo: 'A01',
-            descricao: '13/12/2020',
-          },
-          {
-            idGrupo: 'A01',
-            descricao: '13/12/2020',
-          },
-        ]
-      },
-
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
+      // deleteItem (item) {
+      //   const index = this.desserts.indexOf(item)
+      //   confirm('Deletar Item?') && this.desserts.splice(index, 1)
+      // },
       deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Deletar Item?') && this.desserts.splice(index, 1)
+        const index = this.data.indexOf(item)
+        confirm('Deletar Item?');
+        try{
+            console.log(this.editedItem);
+            let response = Grupo_Material.DataService.deleteGrupo();
+            this.data.splice(index, 1)
+            alert("Response: ", response);
+        } catch (err) {
+          alert(err);
+        }
       },
 
       close () {
@@ -216,9 +180,27 @@
 
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
+          //Update Item
+          try {
+            Object.assign(this.data[this.editedIndex], this.editedItem);
+            console.log(this.editedItem);
+            let response = Grupo_Material.DataService.updateGrupo();
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
+          
+        } else { 
+          //Add Item
+          console.log(this.editedItem);
+
+          try {
+            let response = Grupo_Material.DataService.setGrupo();
+            this.data.push(this.editedItem);
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
         }
         this.close()
       },
