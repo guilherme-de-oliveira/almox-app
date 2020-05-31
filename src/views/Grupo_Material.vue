@@ -42,26 +42,23 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="6" md="3" v-if="editedIndex == -1">
+                      <v-col cols="12" sm="6" md="3">
                         <v-text-field v-model="editedItem.idGrupo" label="idGrupo" disabled></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="3" v-else>
-                        <v-text-field v-model="editedItem.idGrupo" label="idGrupo"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="7">
                         <v-text-field v-model="editedItem.descricao" label="descricao"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="2">
+                      <!-- <v-col cols="12" sm="6" md="2">
                         <v-btn class="mx-2" fab dark small color="primary">
                           <v-icon dark>mdi-plus</v-icon>
-                        </v-btn>
-                      </v-col>
+                        </v-btn>s
+                      </v-col> -->
                     </v-row>
                   </v-container>
                 </v-card-text>
                 <v-card-actions>
                   <v-spacer></v-spacer>
-                  <v-btn color="error darken-1" text @click="close">CancelR</v-btn>
+                  <v-btn color="error darken-1" text @click="close">Cancelar</v-btn>
                   <v-btn color="blue darken-1" text @click="save">Salvar</v-btn>
                 </v-card-actions>
               </v-card>

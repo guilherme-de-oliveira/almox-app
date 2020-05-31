@@ -58,5 +58,32 @@
             "idGrupo": "A04",
             "descricao": "13/12/2020"
           }
-    ]
+    ],
+    "localArmazenamento": [
+        {
+          "idLocal": "A01",
+          "corredor": "B3",
+          "prateleira": 2
+        },
+        {
+            "idLocal": "A02",
+            "corredor": "B3",
+            "prateleira": 2
+          },
+          {
+            "idLocal": "A03",
+            "corredor": "B3",
+            "prateleira": 2
+          },
+          {
+            "idLocal": "A04",
+            "corredor": "B3",
+            "prateleira": 2
+          },
+          {
+            "idLocal": "A01",
+            "corredor": "B3",
+            "prateleira": 2
+          }
+      ]
 }

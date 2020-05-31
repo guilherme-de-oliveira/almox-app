@@ -17,7 +17,7 @@
       </v-col>
       <v-data-table
         :headers="headers"
-        :items="desserts"
+        :items="data"
         :search="search"
         sort-by="calories"
         class="elevation-1"
@@ -43,27 +43,21 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.name" label="ID Local"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.fat" label="Cap Máx(Kg)"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.protein" label="Prateleira(m)"></v-text-field>
+                        <v-text-field v-model="editedItem.idLocal" label="ID Local" disabled></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="6" md="5">
-                        <v-text-field v-model="editedItem.carbs" label="Largura(m)"></v-text-field>
-                      </v-col>  
-                      <v-col cols="12" sm="6" md="5">
-                        <v-text-field v-model="editedItem.protein" label="Altura(m)"></v-text-field>
+                        <v-text-field v-model="editedItem.corredor" label="Corredor"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="2">
+                      <v-col cols="12" sm="6" md="5">
+                        <v-text-field v-model="editedItem.prateleira" label="Prateleira"></v-text-field>
+                      </v-col>
+                      <!-- <v-col cols="12" sm="6" md="2">
                         <v-btn class="mx-2" fab dark small color="primary">
                           <v-icon dark>mdi-plus</v-icon>
                         </v-btn>
-                      </v-col>
+                      </v-col> -->
                     </v-row>
                 </v-container>
               </v-card-text>
@@ -92,20 +86,21 @@
             mdi-delete
           </v-icon>
         </template>
-        <template v-slot:no-data>
+        <!-- <template v-slot:no-data>
           <v-btn color="primary" @click="initialize">Reset</v-btn>
-        </template>
+        </template> -->
       </v-data-table>
     </v-col>
   </v-app>
 </template>
 
 <script>
+import Local_Armazenamento from '../services/Local_Armazenamento';
   export default {
     data: () => ({
       titulo: 'Local de Armazenamento',
       search: '',
-            date: new Date().toISOString().substr(0, 10),
+      date: new Date().toISOString().substr(0, 10),
       menu: false,
       modal: false,
       menu2: false,
@@ -117,36 +112,30 @@
           sortable: false,
           value: 'idLocal',
         },
-        { text: 'Cap Máx(Kg)', value: 'capMax' },
-        { text: 'Largura(m)', value: 'largura' },
-        { text: 'Altura(m)', value: 'altura' },
+        { text: 'Corredor', value: 'corredor' },
         { text: 'Prateleira', value: 'prateleira' },
         { text: 'Ação', value: 'actions', sortable: false },
       ],
-      desserts: [],
+      data: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        idLocal: '',
+        corredor: 0,
+        prateleira: 0,
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        idLocal: '',
+        corredor: 0,
+        prateleira: 0,
       },
-       reqItems: [
-          {
-            cnpj: 1,
-            nome: 'Frozen Yogurt',
-            razaoSocial: 159,
-            endereco: 'Rua X'
-          },
-        ],
+      //  reqItems: [
+      //     {
+      //       cnpj: 1,
+      //       nome: 'Frozen Yogurt',
+      //       razaoSocial: 159,
+      //       endereco: 'Rua X'
+      //     },
+      //   ],
     }),
 
     computed: {
@@ -161,60 +150,34 @@
       },
     },
 
-    created () {
-      this.initialize()
+    async mounted() {
+      try {
+        // const resources = await SystemManagement.TaskService.getAlltickets()
+        let resources = await Local_Armazenamento.DataService.getLocais();
+        this.data = resources;
+      } catch(error) {
+        console.log(error);
+      }
     },
 
     methods: {
-      initialize () {
-        this.desserts = [
-          {
-            idLocal: 'A01',
-            capMax: '13/12/2020',
-            largura: 'Albert',
-            altura: 2,
-            prateleira: 2,
-          },
-          {
-            idLocal: 'A01',
-            capMax: '13/12/2020',
-            largura: 'Albert',
-            altura: 2,
-            prateleira: 2,
-          },
-          {
-            idLocal: 'A01',
-            capMax: '13/12/2020',
-            largura: 'Albert',
-            altura: 2,
-            prateleira: 2,
-          },
-          {
-            idLocal: 'A01',
-            capMax: '13/12/2020',
-            largura: 'Albert',
-            altura: 2,
-            prateleira: 2,
-          },
-          {
-            idLocal: 'A01',
-            capMax: '13/12/2020',
-            largura: 'Albert',
-            altura: 2,
-            prateleira: 2,
-          },
-        ]
-      },
-
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Deletar Item?') && this.desserts.splice(index, 1)
+        const index = this.data.indexOf(item)
+        confirm('Deletar Item?');
+        try{
+            console.log(this.editedItem);
+            let response = Local_Armazenamento.DataService.deleteLocal();
+            this.data.splice(index, 1)
+            alert("Response: ", response);
+        } catch (err) {
+          alert(err);
+        }
       },
 
       close () {
@@ -225,11 +188,29 @@
         })
       },
 
-      save () {
+     save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
+          //Update Item
+          try {
+            Object.assign(this.data[this.editedIndex], this.editedItem);
+            console.log(this.editedItem);
+            let response = Local_Armazenamento.DataService.updateLocal();
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
+          
+        } else { 
+          //Add Item
+          console.log(this.editedItem);
+
+          try {
+            let response = Local_Armazenamento.DataService.setLocal();
+            this.data.push(this.editedItem);
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
         }
         this.close()
       },
