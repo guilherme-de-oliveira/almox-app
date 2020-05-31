@@ -29,6 +29,39 @@ class DataService {
             }
         })
     }
+
+    static setFabricante() {
+        return new Promise((resolve, reject) => {
+            try {
+                const res = "Cadastrado!";
+                resolve (res);
+            } catch(err) {
+                reject(err)
+            }
+        })
+    }
+
+    static updateFabricante() {
+        return new Promise((resolve, reject) => {
+            try {
+                const res = "Atualizado!";
+                resolve (res);
+            } catch(err) {
+                reject(err)
+            }
+        })
+    }
+
+    static deletFabricante() {
+        return new Promise((resolve, reject) => {
+            try {
+                const res = "Deletado!";
+                resolve (res);
+            } catch(err) {
+                reject(err)
+            }
+        })
+    }
 }
 
 export default {

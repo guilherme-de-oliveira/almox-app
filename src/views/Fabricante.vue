@@ -42,35 +42,30 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.name" label="CNPJ"></v-text-field>
+                      <v-col cols="12" sm="6" md="5">
+                        <v-text-field v-model="editedItem.cnpj" label="CNPJ"></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="6" md="7">
-                        <v-text-field v-model="editedItem.fat" label="Nome"></v-text-field>
+                        <v-text-field v-model="editedItem.nome" label="Nome"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2">
-                        <v-text-field v-model="editedItem.fat" label="DDD"></v-text-field>
+                        <v-text-field v-model="editedItem.ddd" label="DDD"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="3">
-                        <v-text-field v-model="editedItem.fat" label="Telefone"></v-text-field>
+                        <v-text-field v-model="editedItem.telefone" label="Telefone"></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
-                      <v-col cols="12" sm="6" md="5">
-                        <v-text-field v-model="editedItem.carbs" label="Razao Social"></v-text-field>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-text-field v-model="editedItem.razaoSocial" label="Razao Social"></v-text-field>
                       </v-col>  
-                      <v-col cols="12" sm="6" md="5">
-                        <v-text-field v-model="editedItem.protein" label="Endereco"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="2">
-                        <v-btn class="mx-2" fab dark small color="primary">
-                          <v-icon dark>mdi-plus</v-icon>
-                        </v-btn>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-text-field v-model="editedItem.endereco" label="Endereco"></v-text-field>
                       </v-col>
                     </v-row>
-                  <v-row>
+                  <!-- <v-row v-if="editedIndex === -1">
                     <v-simple-table dense>
                       <template v-slot:default>
                         <thead>
@@ -87,7 +82,7 @@
                         </tbody>
                       </template>
                     </v-simple-table>
-                  </v-row>
+                  </v-row> -->
                 </v-container>
               </v-card-text>
 
@@ -115,9 +110,9 @@
             mdi-delete
           </v-icon>
         </template>
-        <template v-slot:no-data>
+        <!-- <template v-slot:no-data>
           <v-btn color="primary" @click="initialize">Reset</v-btn>
-        </template>
+        </template> -->
       </v-data-table>
     </v-col>
   </v-app>
@@ -151,27 +146,27 @@ import Fabricante from '../services/Fabricante.js';
       data: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        cnpj: '',
+        nome: '',
+        razaoSocial: '',
+        endereco: '',
+        ddd: '',
+        telefone: ''
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        cnpj: '',
+        nome: 0,
+        razaoSocial: 0,
+        endereco: 0,
       },
-       reqItems: [ //Add new Items to list
-          {
-            cnpj: 1,
-            nome: 'Frozen Yogurt',
-            razaoSocial: 159,
-            endereco: 'Rua X'
-          },
-        ],
+      //  reqItems: [ //Add new Items to list
+      //     {
+      //       cnpj: 1,
+      //       nome: 'Frozen Yogurt',
+      //       razaoSocial: 159,
+      //       endereco: 'Rua X'
+      //     },
+      //   ],
     }),
 
     computed: {
@@ -205,7 +200,15 @@ import Fabricante from '../services/Fabricante.js';
 
       deleteItem (item) {
         const index = this.data.indexOf(item)
-        confirm('Deletar Item?') && this.data.splice(index, 1)
+        confirm('Deletar Item?');
+        try{
+            console.log(this.editedItem);
+            let response = Fabricante.DataService.deletFabricante();
+            this.data.splice(index, 1)
+            alert("Response: ", response);
+        } catch (err) {
+          alert(err);
+        }
       },
 
       close () {
@@ -218,9 +221,27 @@ import Fabricante from '../services/Fabricante.js';
 
       save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.data[this.editedIndex], this.editedItem)
-        } else {
-          this.data.push(this.editedItem)
+          //Update Item
+          try {
+            Object.assign(this.data[this.editedIndex], this.editedItem);
+            console.log(this.editedItem);
+            let response = Fabricante.DataService.updateFabricante();
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
+          
+        } else { 
+          //Add Item
+          console.log(this.editedItem);
+
+          try {
+            let response = Fabricante.DataService.setFabricante();
+            this.data.push(this.editedItem);
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
         }
         this.close()
       },
