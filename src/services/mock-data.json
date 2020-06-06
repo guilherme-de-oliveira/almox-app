@@ -85,5 +85,55 @@
             "corredor": "B3",
             "prateleira": 2
           }
+      ],
+      "materiais": [
+        {
+          "codMaterial": "A01",
+          "unidadeMedidada": "13/12/2020",
+          "fabricante": "Albert",
+          "local": "Z01",
+          "codigoBarra": 2,
+          "estoque": 3,
+          "estoqueMinimo": 3,
+          "estoqueSeguranca": 3,
+          "grupoMaterial": "Metal",
+          "descricao": "Descricao do produto"
+        },
+        {
+          "codMaterial": "A01",
+          "unidadeMedidada": "13/12/2020",
+          "fabricante": "Albert",
+          "local": "Z01",
+          "codigoBarra": 2,
+          "estoque": 3,
+          "estoqueMinimo": 3,
+          "estoqueSeguranca": 3,
+          "grupoMaterial": "Metal",
+          "descricao": "Descricao do produto"
+        },
+        {
+          "codMaterial": "A01",
+          "unidadeMedidada": "13/12/2020",
+          "fabricante": "Albert",
+          "local": "Z01",
+          "codigoBarra": 2,
+          "estoque": 3,
+          "estoqueMinimo": 3,
+          "estoqueSeguranca": 3,
+          "grupoMaterial": "Metal",
+          "descricao": "Descricao do produto"
+        },
+        {
+          "codMaterial": "A01",
+          "unidadeMedidada": "13/12/2020",
+          "fabricante": "Albert",
+          "local": "Z01",
+          "codigoBarra": 2,
+          "estoque": 3,
+          "estoqueMinimo": 3,
+          "estoqueSeguranca": 3,
+          "grupoMaterial": "Metal",
+          "descricao": "Descricao do produto"
+        }
       ]
 }

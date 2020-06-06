@@ -17,7 +17,7 @@
       </v-col>
       <v-data-table
         :headers="headers"
-        :items="desserts"
+        :items="data"
         :search="search"
         sort-by="calories"
         class="elevation-1"
@@ -43,52 +43,65 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.name" label="Cod Material"></v-text-field>
+                        <v-text-field v-model="editedItem.codMaterial" label="Cod Material" disabled></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.fat" label="Un Medida"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.protein" label="Quantidade"></v-text-field>
+                      <v-col cols="12" sm="6" md="8">
+                        <v-text-field v-model="editedItem.descricao" label="Descrição"></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.fat" label="Estoque"></v-text-field>
+                        <v-text-field v-model="editedItem.fabricante" label="ID Fabricante"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.carbs" label="Estoque Min"></v-text-field>
+                        <v-text-field v-model="editedItem.local" label="ID Local"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.protein" label="Estoque Seg"></v-text-field>
-                      </v-col>  
+                        <v-text-field v-model="editedItem.grupoMaterial" label="ID Grupo Material"></v-text-field>
+                      </v-col>
                     </v-row>
                     <v-row>
-                      <v-col cols="12" sm="6" md="5">
-                        <v-text-field v-model="editedItem.protein" label="Código de barra"></v-text-field>
+                      <thead>
+                        <tr>
+                          <th class="text-left">Estoque</th>
+                        </tr>
+                      </thead>
+                      <v-col cols="12" sm="6" md="3">
+                        <v-text-field v-model="editedItem.estoque" label="Atual"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="5">
-                        <v-text-field v-model="editedItem.protein" label="Descrição"></v-text-field>
+                      <v-col cols="12" sm="6" md="3">
+                        <v-text-field v-model="editedItem.estoqueMinimo" label="Mínimo"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="3">
+                        <v-text-field v-model="editedItem.estoqueSeguranca" label="Segurança"></v-text-field>
+                      </v-col>
+                    </v-row>
+                    <v-row>
+                      <v-col cols="12" sm="6" md="6">
+                        <v-text-field v-model="editedItem.codigoBarra" label="Código de barra"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="editedItem.unidadeMedidada" label="Un Medida"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2">
-                        <v-btn class="mx-2" fab dark small color="primary">
+                        <v-btn class="mx-2" fab dark small color="primary" @click="addItems(editedItem)">
                           <v-icon dark>mdi-plus</v-icon>
                         </v-btn>
                       </v-col>
                     </v-row>
-                  <v-row>
+                  <v-row v-if="editedIndex === -1">
                     <v-simple-table dense>
                       <template v-slot:default>
                         <thead>
                           <tr>
-                            <th class="text-left">CNPJ</th>
-                            <th class="text-left">Nome</th>
+                            <th class="text-left">Descrição</th>
+                            <th class="text-left">Estoque</th>
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="item in reqItems" :key="item.nome">
-                            <td>{{ item.cnpj }}</td>
-                            <td>{{ item.nome }}</td>
+                          <tr v-for="item in addedItems" :key="item.descricao">
+                            <td>{{ item.descricao }}</td>
+                            <td>{{ item.estoque }}</td>
                           </tr>
                         </tbody>
                       </template>
@@ -121,15 +134,17 @@
             mdi-delete
           </v-icon>
         </template>
-        <template v-slot:no-data>
+        <!-- <template v-slot:no-data>
           <v-btn color="primary" @click="initialize">Reset</v-btn>
-        </template>
+        </template> -->
       </v-data-table>
     </v-col>
   </v-app>
 </template>
 
 <script>
+import Material from '../services/Material';
+
   export default {
     data: () => ({
       titulo: 'Material',
@@ -139,6 +154,7 @@
       modal: false,
       menu2: false,
       dialog: false,
+      data: [],
       headers: [
         {
           text: 'Cod Material',
@@ -146,23 +162,27 @@
           sortable: false,
           value: 'codMaterial',
         },
-        { text: 'Un Medida', value: 'unidadeMedida' },
-        { text: 'Classificação', value: 'classificacao' },
-        { text: 'Código de Barra', value: 'codigoBarra' },
+        { text: 'Descrição', value: 'descricao' },        
         { text: 'Estoque', value: 'estoque' },
-        { text: 'Grupo Material', value: 'grupoMaterial' },
-        { text: 'Descrição', value: 'descricao' },
+        { text: 'Estoque Seg.', value: 'estoqueSeguranca' },
+        { text: 'Un Medida', value: 'unidadeMedida' },
         { text: 'Ação', value: 'actions', sortable: false },
       ],
       desserts: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        codMaterial: "",
+        unidadeMedida: "",
+        fabricante: "",
+        local: "",
+        codigoBarra: "",
+        estoque: "",
+        estoqueMinimo: "",
+        estoqueSeguranca: "",
+        grupoMaterial: "",
+        descricao: ""
       },
+      addedItems: [],
       defaultItem: {
         name: '',
         calories: 0,
@@ -170,14 +190,6 @@
         carbs: 0,
         protein: 0,
       },
-       reqItems: [
-          {
-            cnpj: 1,
-            nome: 'Frozen Yogurt',
-            razaoSocial: 159,
-            endereco: 'Rua X'
-          },
-        ],
     }),
 
     computed: {
@@ -192,79 +204,36 @@
       },
     },
 
-    created () {
-      this.initialize()
+    async mounted() {
+      try {
+        // const resources = await SystemManagement.TaskService.getAlltickets()
+        let resources = await Material.DataService.getMateriais();
+        // console.log(resources);
+        this.data = resources;
+      } catch(error) {
+        console.log(error);
+      }
     },
 
     methods: {
-      initialize () {
-        this.desserts = [
-          {
-            codMaterial: 'A01',
-            unidadeMedidada: '13/12/2020',
-            classificacao: 'Albert',
-            codigoBarra: 2,
-            estoque: 3,
-            grupoMaterial: 'Metal',
-            descricao: 'Descricao do produto'
-          },
-          {
-            codMaterial: 'A01',
-            unidadeMedidada: '13/12/2020',
-            classificacao: 'Albert',
-            codigoBarra: 2,
-            estoque: 3,
-            grupoMaterial: 'Metal',
-            descricao: 'Descricao do produto'
-          },
-          {
-            codMaterial: 'A01',
-            unidadeMedidada: '13/12/2020',
-            classificacao: 'Albert',
-            codigoBarra: 2,
-            estoque: 3,
-            grupoMaterial: 'Metal',
-            descricao: 'Descricao do produto'
-          },
-          {
-            codMaterial: 'A01',
-            unidadeMedidada: '13/12/2020',
-            classificacao: 'Albert',
-            codigoBarra: 2,
-            estoque: 3,
-            grupoMaterial: 'Metal',
-            descricao: 'Descricao do produto'
-          },
-          {
-            codMaterial: 'A01',
-            unidadeMedidada: '13/12/2020',
-            classificacao: 'Albert',
-            codigoBarra: 2,
-            estoque: 3,
-            grupoMaterial: 'Metal',
-            descricao: 'Descricao do produto'
-          },
-          {
-            codMaterial: 'A01',
-            unidadeMedidada: '13/12/2020',
-            classificacao: 'Albert',
-            codigoBarra: 2,
-            estoque: 3,
-            grupoMaterial: 'Metal',
-            descricao: 'Descricao do produto'
-          },
-        ]
-      },
-
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Deletar Item?') && this.desserts.splice(index, 1)
+        const index = this.data.indexOf(item)
+        if (confirm('Deletar Item?')) {
+          try{
+              console.log(this.editedItem);
+              let response = Material.DataService.deleteMaterial();
+              this.data.splice(index, 1)
+              alert("Response: ", response);
+          } catch (err) {
+            alert(err);
+          }
+        }
       },
 
       close () {
@@ -275,20 +244,46 @@
         })
       },
 
-      save () {
+     save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
+          //Update Item
+          try {
+            Object.assign(this.data[this.editedIndex], this.editedItem);
+            console.log(this.editedItem);
+            let response = Material.DataService.updateMaterial();
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
+          
+        } else { 
+          //Add Item
+          console.log(this.editedItem);
+
+          try {
+            let response = Material.DataService.setMaterial();
+            this.data.push(this.editedItem);
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
         }
         this.close()
       },
+
+      addItems(item) {
+        console.log(item)
+
+        this.addedItems.push(this.editedItem);
+        this.editedItem = {};
+        console.log(this.addedItems);
+      }
     }
   } 
 </script>
 <style>
- h2{
-   margin-left: 70px;
- }
+h2{
+  margin-left: 70px;
+}
  
 </style>
