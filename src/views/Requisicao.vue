@@ -17,7 +17,7 @@
       </v-col>
       <v-data-table
         :headers="headers"
-        :items="desserts"
+        :items="data"
         :search="search"
         sort-by="calories"
         class="elevation-1"
@@ -43,7 +43,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.name" label="N Requisição"></v-text-field>
+                        <v-text-field v-model="editedItem.requisicao" label="N Requisição" disabled></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
                         <v-menu
@@ -70,7 +70,7 @@
                         </v-menu>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.fat" label="Solicitante"></v-text-field>
+                        <v-text-field v-model="editedItem.solicitante" label="Solicitante"></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -78,15 +78,15 @@
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.carbs" label="Código"></v-text-field>
+                        <v-text-field v-model="editedItem.requisicao" label="ID Requisição" disabled></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.protein" label="Nome"></v-text-field>
+                        <v-text-field v-model="editedItem.codMaterial" label="Cod Material"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2">
                         <v-text-field v-model="editedItem.protein" label="Qtde"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="2">
+                      <v-col cols="12" sm="6" md="2" v-if="editedIndex === -1">
                         <v-btn class="mx-2" fab dark small color="primary">
                           <v-icon dark>mdi-plus</v-icon>
                         </v-btn>
@@ -103,7 +103,7 @@
                           </tr>
                         </thead>
                         <tbody>
-                          <tr v-for="item in reqItems" :key="item.nome">
+                          <tr v-for="item in addedItems" :key="item.codigo">
                             <td>{{ item.codigo }}</td>
                             <td>{{ item.nome }}</td>
                             <td>{{ item.quantidade }}</td>
@@ -139,9 +139,6 @@
             mdi-delete
           </v-icon>
         </template>
-        <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">Reset</v-btn>
-        </template>
       </v-data-table>
     </v-col>
   </v-app>
@@ -149,45 +146,16 @@
 
 <script>
 // import Cards from '../components/Cards';
+import Requisicao from '../services/Requisicao';
 
   export default {
-
-    // components: {
-    //     Cards
-    // },
     data: () => ({
       titulo: 'Requisição de Materiais',
       search: '',
-            date: new Date().toISOString().substr(0, 10),
+      date: new Date().toISOString().substr(0, 10),
       menu: false,
       modal: false,
       menu2: false,
-      data: {
-        consultar: {
-          action: '/consultar',
-          cabecalho: 'Consultar',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
-        },
-        adicionar: {
-          action: '/adicionar',
-          cabecalho: 'Home',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
-        },
-        alterar: {
-          action: '/alterar',
-          cabecalho: 'Requisição',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
-        },
-        pesquisar: {
-          action: '/pesquisar',
-          cabecalho: 'Inventário',
-          descritivo: 'Greyhound divisely hello coldly fonwderfully',
-          tipo: 'Gerenciar'
-        },
-      },
       dialog: false,
       headers: [
         {
@@ -202,44 +170,23 @@
         { text: 'Status', value: 'status' },
         { text: 'Ação', value: 'actions', sortable: false },
       ],
-      desserts: [],
+      data: [],
+      addedItems: [],
       editedIndex: -1,
       editedItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        requisicao: '',
+        data: '',
+        solicitante: '',
+        quantidade: '',
+        status: '',
       },
       defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
+        requisicao: '',
+        data: '',
+        solicitante: '',
+        quantidade: '',
+        status: '',
       },
-       reqItems: [
-          {
-            codigo: 1,
-            nome: 'Frozen Yogurt',
-            quantidade: 159,
-          },
-          {
-            codigo: 1,
-            nome: 'Frozen Yogurt',
-            quantidade: 159,
-          },
-          {
-            codigo: 1,
-            nome: 'Frozen Yogurt',
-            quantidade: 159,
-          },
-          {
-            codigo: 1,
-            nome: 'Frozen Yogurt',
-            quantidade: 159,
-          },
-        ],
     }),
 
     computed: {
@@ -254,95 +201,36 @@
       },
     },
 
-    created () {
-      this.initialize()
+    async mounted() {
+      try {
+        // const resources = await SystemManagement.TaskService.getAlltickets()
+        let resources = await Requisicao.DataService.getRequisicoes();
+        // console.log(resources);
+        this.data = resources;
+      } catch(error) {
+        console.log(error);
+      }
     },
 
     methods: {
-      initialize () {
-        this.desserts = [
-          {
-            requisicao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'fechado',
-          },
-          {
-            requisicao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            requisicao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            requisicao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            requisicao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            requisicao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            requisicao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            requisicao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            requisicao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            requisicao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-        ]
-      },
-
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Deletar Item?') && this.desserts.splice(index, 1)
+        const index = this.data.indexOf(item)
+        if (confirm('Deletar Item?')) {
+          try{
+              console.log(this.editedItem);
+              let response = Requisicao.DataService.deleteRequisicao();
+              this.data.splice(index, 1)
+              alert("Response: ", response);
+          } catch (err) {
+            alert(err);
+          }
+        }
       },
 
       close () {
@@ -353,14 +241,40 @@
         })
       },
 
-      save () {
+     save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
+          //Update Item
+          try {
+            Object.assign(this.data[this.editedIndex], this.editedItem);
+            console.log(this.editedItem);
+            let response = Requisicao.DataService.updateRequisicao();
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
+          
+        } else { 
+          //Add Item
+          console.log(this.editedItem);
+
+          try {
+            let response = Requisicao.DataService.setRequisicao();
+            this.data.push(this.editedItem);
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
         }
         this.close()
       },
+
+      addItems(item) {
+        console.log(item)
+
+        this.addedItems.push(this.editedItem);
+        this.editedItem = {};
+        console.log(this.addedItems);
+      }
     }
   } 
 </script>

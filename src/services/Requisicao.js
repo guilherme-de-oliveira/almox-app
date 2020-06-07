@@ -1,7 +1,5 @@
 // import axios from 'axios';
-const axios = require('axios');
-
-// import mockData from './mock-data.json';
+import mockData from './mock-data.json';
 // const url = 'url',
 
 // class TaskService {
@@ -20,12 +18,10 @@ const axios = require('axios');
 // }
 
 class DataService {
-    static getMateriais() {
+    static getRequisicoes() {
         return new Promise( (resolve, reject) => { //retirei o ASYNC
             try {
-                // const res = mockData.materiais;
- const res = axios.get('http://almoxarifado-tg.sa-east-1.elasticbeanstalk.com/material');
-
+                const res = mockData.requisicoes;
                 console.log(res);
                 resolve (res);
             } catch(err) {
@@ -34,7 +30,7 @@ class DataService {
         })
     }
 
-    static setMaterial() {
+    static setRequisicao() {
         return new Promise((resolve, reject) => {
             try {
                 const res = "Cadastrado!";
@@ -45,7 +41,7 @@ class DataService {
         })
     }
 
-    static updateMaterial() {
+    static updateRequisicao() {
         return new Promise((resolve, reject) => {
             try {
                 const res = "Atualizado!";
@@ -56,7 +52,7 @@ class DataService {
         })
     }
 
-    static deleteMaterial() {
+    static deleteRequisicao() {
         return new Promise((resolve, reject) => {
             try {
                 const res = "Deletado!";

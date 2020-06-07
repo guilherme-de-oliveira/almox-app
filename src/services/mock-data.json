@@ -135,5 +135,42 @@
           "grupoMaterial": "Metal",
           "descricao": "Descricao do produto"
         }
-      ]
+      ],
+      "requisicoes": [
+      {
+        "requisicao": "A01",
+        "data": "13/12/2020",
+        "solicitante": "Albert",
+        "quantidade": 2,
+        "status": "fechado"
+      },
+      {
+        "requisicao": "A01",
+        "data": "13/12/2020",
+        "solicitante": "Albert",
+        "quantidade": 2,
+        "status": "fechado"
+      },
+      {
+        "requisicao": "A01",
+        "data": "13/12/2020",
+        "solicitante": "Albert",
+        "quantidade": 2,
+        "status": "fechado"
+      },
+      {
+        "requisicao": "A01",
+        "data": "13/12/2020",
+        "solicitante": "Albert",
+        "quantidade": 2,
+        "status": "fechado"
+      },
+      {
+        "requisicao": "A01",
+        "data": "13/12/2020",
+        "solicitante": "Albert",
+        "quantidade": 2,
+        "status": "fechado"
+      }
+    ]
 }

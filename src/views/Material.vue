@@ -83,13 +83,13 @@
                       <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.unidadeMedidada" label="Un Medida"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="2">
+                      <v-col cols="12" sm="6" md="2" v-if="editedIndex === -1">
                         <v-btn class="mx-2" fab dark small color="primary" @click="addItems(editedItem)">
                           <v-icon dark>mdi-plus</v-icon>
                         </v-btn>
                       </v-col>
                     </v-row>
-                  <v-row v-if="editedIndex === -1">
+                  <v-row>
                     <v-simple-table dense>
                       <template v-slot:default>
                         <thead>
@@ -208,8 +208,8 @@ import Material from '../services/Material';
       try {
         // const resources = await SystemManagement.TaskService.getAlltickets()
         let resources = await Material.DataService.getMateriais();
-        // console.log(resources);
-        this.data = resources;
+        console.log(resources.data);
+        this.data = resources.data;
       } catch(error) {
         console.log(error);
       }
