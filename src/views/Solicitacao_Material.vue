@@ -17,7 +17,7 @@
       </v-col>
       <v-data-table
         :headers="headers"
-        :items="desserts"
+        :items="data"
         :search="search"
         sort-by="calories"
         class="elevation-1"
@@ -43,7 +43,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.name" label="ID Solicitação"></v-text-field>
+                        <v-text-field v-model="editedItem.idSolicitacao" label="ID Solicitação" disabled></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
                         <v-menu
@@ -58,7 +58,7 @@
                           <template v-slot:activator="{ on }">
                             <v-text-field
                               v-model="date"
-                              label="Picker in menu"
+                              label="Data"
                               v-on="on"
                             ></v-text-field>
                           </template>
@@ -142,9 +142,6 @@
             mdi-delete
           </v-icon>
         </template>
-        <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">Reset</v-btn>
-        </template>
       </v-data-table>
     </v-col>
   </v-app>
@@ -152,6 +149,7 @@
 
 <script>
 // import Cards from '../components/Cards';
+import Solicitacao_Material from '../services/Solicitacao_Material';
 
   export default {
 
@@ -179,7 +177,7 @@
         { text: 'Status', value: 'status' },
         { text: 'Ação', value: 'actions', sortable: false },
       ],
-      desserts: [],
+      data: [],
       editedIndex: -1,
       editedItem: {
         name: '',
@@ -195,28 +193,6 @@
         carbs: 0,
         protein: 0,
       },
-       reqItems: [
-          {
-            codigo: 1,
-            nome: 'Frozen Yogurt',
-            quantidade: 159,
-          },
-          {
-            codigo: 1,
-            nome: 'Frozen Yogurt',
-            quantidade: 159,
-          },
-          {
-            codigo: 1,
-            nome: 'Frozen Yogurt',
-            quantidade: 159,
-          },
-          {
-            codigo: 1,
-            nome: 'Frozen Yogurt',
-            quantidade: 159,
-          },
-        ],
     }),
 
     computed: {
@@ -231,81 +207,36 @@
       },
     },
 
-    created () {
-      this.initialize()
+    async mounted() {
+      try {
+        // const resources = await SystemManagement.TaskService.getAlltickets()
+        let resources = await Solicitacao_Material.DataService.getSolicitacoes();
+        console.log(resources);
+        this.data = resources;
+      } catch(error) {
+        console.log(error);
+      }
     },
 
     methods: {
-      initialize () {
-        this.desserts = [
-          {
-            idSolicitacao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'fechado',
-          },
-          {
-            idSolicitacao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            idSolicitacao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            idSolicitacao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            idSolicitacao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            idSolicitacao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            idSolicitacao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-          {
-            idSolicitacao: 'A01',
-            data: '13/12/2020',
-            solicitante: 'Albert',
-            quantidade: 2,
-            status: 'aberto',
-          },
-        ]
-      },
-
       editItem (item) {
-        this.editedIndex = this.desserts.indexOf(item)
+        this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
         this.dialog = true
       },
 
       deleteItem (item) {
-        const index = this.desserts.indexOf(item)
-        confirm('Deletar Item?') && this.desserts.splice(index, 1)
+        const index = this.data.indexOf(item)
+        if (confirm('Deletar Item?')) {
+          try{
+              console.log(this.editedItem);
+              let response = Solicitacao_Material.DataService.deleteSolicitacao();
+              this.data.splice(index, 1)
+              alert("Response: ", response);
+          } catch (err) {
+            alert(err);
+          }
+        }
       },
 
       close () {
@@ -316,14 +247,40 @@
         })
       },
 
-      save () {
+     save () {
         if (this.editedIndex > -1) {
-          Object.assign(this.desserts[this.editedIndex], this.editedItem)
-        } else {
-          this.desserts.push(this.editedItem)
+          //Update Item
+          try {
+            Object.assign(this.data[this.editedIndex], this.editedItem);
+            console.log(this.editedItem);
+            let response = Solicitacao_Material.DataService.updateSolicitacao();
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
+          
+        } else { 
+          //Add Item
+          console.log(this.editedItem);
+
+          try {
+            let response = Solicitacao_Material.DataService.setSolicitacao();
+            this.data.push(this.editedItem);
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
         }
         this.close()
       },
+
+      addItems(item) {
+        console.log(item)
+
+        this.addedItems.push(this.editedItem);
+        this.editedItem = {};
+        console.log(this.addedItems);
+      }
     }
   } 
 </script>

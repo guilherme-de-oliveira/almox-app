@@ -172,5 +172,21 @@
         "quantidade": 2,
         "status": "fechado"
       }
+    ],
+    "solicitacoes": [
+      {
+        "idSolicitacao": "A01",
+        "data": "13/12/2020",
+        "solicitante": "Albert",
+        "quantidade": 2,
+        "status": "fechado"
+      },
+      {
+        "idSolicitacao": "A01",
+        "data": "13/12/2020",
+        "solicitante": "Albert",
+        "quantidade": 2,
+        "status": "fechado"
+      }
     ]
 }
