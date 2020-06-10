@@ -1,27 +1,12 @@
-// import axios from 'axios';
-import mockData from './mock-data.json';
-// const url = 'url',
+import axios from 'axios';
 
-// class TaskService {
-//     static getAllTickets() {
-//         return new Promise(async (resolve, reject) => {
-//             try {
-//                 // const res = await axios.get(`${url}system-management/ticket/`);
-//                 const res = mockData.fabricantes;
-//                 console.log(res);
-//                 resolve (res.data);
-//             } catch(err) {
-//                 reject(err)
-//             }
-//         })
-//     }
-// }
+const url = 'http://almoxarifado-tg.sa-east-1.elasticbeanstalk.com/local';
 
 class DataService {
     static getLocais() {
-        return new Promise( (resolve, reject) => { //retirei o ASYNC
+        return new Promise( (resolve, reject) => {
             try {
-                const res = mockData.localArmazenamento;
+                const res = axios.get(url);
                 console.log(res);
                 resolve (res);
             } catch(err) {

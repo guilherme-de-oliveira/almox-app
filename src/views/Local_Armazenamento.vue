@@ -43,7 +43,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.idLocal" label="ID Local" disabled></v-text-field>
+                        <v-text-field v-model="editedItem.id_local" label="ID Local" disabled></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -110,7 +110,7 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
           text: 'ID Local',
           align: 'start',
           sortable: false,
-          value: 'idLocal',
+          value: 'id_local',
         },
         { text: 'Corredor', value: 'corredor' },
         { text: 'Prateleira', value: 'prateleira' },
@@ -119,23 +119,15 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
       data: [],
       editedIndex: -1,
       editedItem: {
-        idLocal: '',
-        corredor: 0,
-        prateleira: 0,
+        id_local: '',
+        corredor: '',
+        prateleira: '',
       },
       defaultItem: {
-        idLocal: '',
-        corredor: 0,
-        prateleira: 0,
+        id_local: '',
+        corredor: '',
+        prateleira: '',
       },
-      //  reqItems: [
-      //     {
-      //       cnpj: 1,
-      //       nome: 'Frozen Yogurt',
-      //       razaoSocial: 159,
-      //       endereco: 'Rua X'
-      //     },
-      //   ],
     }),
 
     computed: {
@@ -154,7 +146,7 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
       try {
         // const resources = await SystemManagement.TaskService.getAlltickets()
         let resources = await Local_Armazenamento.DataService.getLocais();
-        this.data = resources;
+        this.data = resources.data;
       } catch(error) {
         console.log(error);
       }
