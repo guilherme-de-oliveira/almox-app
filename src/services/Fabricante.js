@@ -1,6 +1,6 @@
-// import axios from 'axios';
-import mockData from './mock-data.json';
-// const url = 'url',
+import axios from 'axios';
+// import mockData from './mock-data.json';
+const url = 'http://almoxarifado-tg.sa-east-1.elasticbeanstalk.com/fabricante';
 
 // class TaskService {
 //     static getAllTickets() {
@@ -19,9 +19,9 @@ import mockData from './mock-data.json';
 
 class DataService {
     static getFabricantes() {
-        return new Promise( (resolve, reject) => { //retirei o ASYNC
+        return new Promise((resolve, reject) => { //retirei o ASYNC
             try {
-                const res = mockData.fabricantes;
+                const res = axios.get(url);
                 console.log(res);
                 resolve (res);
             } catch(err) {

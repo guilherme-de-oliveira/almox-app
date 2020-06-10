@@ -48,7 +48,7 @@
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="6" md="7">
-                        <v-text-field v-model="editedItem.nome" label="Nome"></v-text-field>
+                        <v-text-field v-model="editedItem.nome_fantasia" label="Nome"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2">
                         <v-text-field v-model="editedItem.ddd" label="DDD"></v-text-field>
@@ -59,32 +59,14 @@
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field v-model="editedItem.razaoSocial" label="Razao Social"></v-text-field>
+                        <v-text-field v-model="editedItem.razao_social" label="Razao Social"></v-text-field>
                       </v-col>  
                       <v-col cols="12" sm="6" md="6">
                         <v-text-field v-model="editedItem.endereco" label="Endereco"></v-text-field>
                       </v-col>
                     </v-row>
-                  <!-- <v-row v-if="editedIndex === -1">
-                    <v-simple-table dense>
-                      <template v-slot:default>
-                        <thead>
-                          <tr>
-                            <th class="text-left">CNPJ</th>
-                            <th class="text-left">Nome</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          <tr v-for="item in reqItems" :key="item.nome">
-                            <td>{{ item.cnpj }}</td>
-                            <td>{{ item.nome }}</td>
-                          </tr>
-                        </tbody>
-                      </template>
-                    </v-simple-table>
-                  </v-row> -->
-                </v-container>
-              </v-card-text>
+                  </v-container>
+                </v-card-text>
 
                 <v-card-actions>
                   <v-spacer></v-spacer>
@@ -110,16 +92,12 @@
             mdi-delete
           </v-icon>
         </template>
-        <!-- <template v-slot:no-data>
-          <v-btn color="primary" @click="initialize">Reset</v-btn>
-        </template> -->
       </v-data-table>
     </v-col>
   </v-app>
 </template>
 
 <script>
-// import System-Management from 'service/.js'
 import Fabricante from '../services/Fabricante.js';
 
   export default {
@@ -138,8 +116,8 @@ import Fabricante from '../services/Fabricante.js';
           sortable: false,
           value: 'cnpj',
         },
-        { text: 'Nome', value: 'nome' },
-        { text: 'Razao Social', value: 'razaoSocial' },
+        { text: 'Nome', value: 'nome_fantasia' },
+        { text: 'Razao Social', value: 'razao_social' },
         { text: 'Endereço', value: 'endereco' },
         { text: 'Ação', value: 'actions', sortable: false },
       ],
@@ -159,14 +137,6 @@ import Fabricante from '../services/Fabricante.js';
         razaoSocial: 0,
         endereco: 0,
       },
-      //  reqItems: [ //Add new Items to list
-      //     {
-      //       cnpj: 1,
-      //       nome: 'Frozen Yogurt',
-      //       razaoSocial: 159,
-      //       endereco: 'Rua X'
-      //     },
-      //   ],
     }),
 
     computed: {
@@ -185,7 +155,8 @@ import Fabricante from '../services/Fabricante.js';
       try {
         // const resources = await SystemManagement.TaskService.getAlltickets()
         let resources = await Fabricante.DataService.getFabricantes();
-        this.data = resources;
+        this.data = resources.data;
+        console.log(resources);
       } catch(error) {
         console.log(error);
       }
