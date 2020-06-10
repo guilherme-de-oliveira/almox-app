@@ -96,7 +96,8 @@
 
 <script>
 import Local_Armazenamento from '../services/Local_Armazenamento';
-  export default {
+
+export default {
     data: () => ({
       titulo: 'Local de Armazenamento',
       search: '',

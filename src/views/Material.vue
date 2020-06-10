@@ -43,21 +43,30 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.codMaterial" label="Cod Material" disabled></v-text-field>
+                        <v-text-field v-model="editedItem.id_material" label="ID Material" disabled></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="8">
                         <v-text-field v-model="editedItem.descricao" label="Descrição"></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
+                      <!-- <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="editedItem.id_fabricante" label="ID Fabricante"></v-text-field>
+                      </v-col> -->
+                      <v-col class="d-flex" cols="12" sm="4">
+        <v-select
+          :items="fabricantes"
+          item-text="nome_fantasia"
+          item-value="id_fabricante"
+          label="Fabricante"
+          v-model="fabricante.id_fabricante"
+        ></v-select>
+      </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.fabricante" label="ID Fabricante"></v-text-field>
+                        <v-text-field v-model="editedItem.id_local" label="ID Local"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.local" label="ID Local"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.grupoMaterial" label="ID Grupo Material"></v-text-field>
+                        <v-text-field v-model="editedItem.id_grupo_material" label="ID Grupo Material"></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -66,22 +75,19 @@
                           <th class="text-left">Estoque</th>
                         </tr>
                       </thead>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-text-field v-model="editedItem.estoque" label="Atual"></v-text-field>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="editedItem.estoque_atual" label="Atual"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-text-field v-model="editedItem.estoqueMinimo" label="Mínimo"></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="3">
-                        <v-text-field v-model="editedItem.estoqueSeguranca" label="Segurança"></v-text-field>
+                      <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="editedItem.estoque_minimo" label="Mínimo"></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field v-model="editedItem.codigoBarra" label="Código de barra"></v-text-field>
+                        <v-text-field v-model="editedItem.cod_barra" label="Código de barra"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.unidadeMedidada" label="Un Medida"></v-text-field>
+                        <v-text-field v-model="editedItem.id_un_medida" label="Un Medida"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2" v-if="editedIndex === -1">
                         <v-btn class="mx-2" fab dark small color="primary" @click="addItems(editedItem)">
@@ -144,52 +150,51 @@
 
 <script>
 import Material from '../services/Material';
+import Fabricante from '../services/Fabricante.js';
+import Grupo_Material from '../services/Grupo_Material.js';
+import Local_Armazenamento from '../services/Local_Armazenamento';
 
   export default {
     data: () => ({
       titulo: 'Material',
       search: '',
-            date: new Date().toISOString().substr(0, 10),
+      date: new Date().toISOString().substr(0, 10),
       menu: false,
       modal: false,
       menu2: false,
       dialog: false,
       data: [],
+      fabricantes: [],
+      fabricante: {},
+      gruposMaterial: [],
+      locais: [],
       headers: [
         {
-          text: 'Cod Material',
+          text: 'ID Material',
           align: 'start',
           sortable: false,
-          value: 'codMaterial',
+          value: 'id_material',
         },
         { text: 'Descrição', value: 'descricao' },        
-        { text: 'Estoque', value: 'estoque' },
-        { text: 'Estoque Seg.', value: 'estoqueSeguranca' },
-        { text: 'Un Medida', value: 'unidadeMedida' },
+        { text: 'Estoque', value: 'estoque_atual' },
+        { text: 'Estoque Min.', value: 'estoque_minimo' },
+        { text: 'Un Medida', value: 'id_un_medida' },
+        { text: 'Local', value: 'id_local' },
         { text: 'Ação', value: 'actions', sortable: false },
       ],
-      desserts: [],
       editedIndex: -1,
       editedItem: {
-        codMaterial: "",
-        unidadeMedida: "",
-        fabricante: "",
-        local: "",
-        codigoBarra: "",
-        estoque: "",
-        estoqueMinimo: "",
-        estoqueSeguranca: "",
-        grupoMaterial: "",
+        id_material: "",
+        id_un_medida: "",
+        id_fabricante: "",
+        id_local: "",
+        cod_barra: "",
+        estoque_atual: "",
+        estoque_minimo: "",
+        id_grupo_material: "",
         descricao: ""
       },
       addedItems: [],
-      defaultItem: {
-        name: '',
-        calories: 0,
-        fat: 0,
-        carbs: 0,
-        protein: 0,
-      },
     }),
 
     computed: {
@@ -210,15 +215,55 @@ import Material from '../services/Material';
         let resources = await Material.DataService.getMateriais();
         console.log(resources.data);
         this.data = resources.data;
+
+//arrumar
+        let resources1 = await Fabricante.DataService.getFabricantes();
+        this.fabricantes = resources1.data;
+        console.log(resources1.data);
       } catch(error) {
         console.log(error);
       }
+      // this.getFabricantes();
+      this.getLocais();
+      this.getGrupos();
     },
 
     methods: {
+      async getFabricantes() {
+        try {
+          // const resources = await SystemManagement.TaskService.getAlltickets()
+          let resources = await Fabricante.DataService.getFabricantes();
+          this.fabricantes = resources.data;
+          console.log(resources.data);
+        } catch(error) {
+          console.log(error);
+        }
+      },
+
+      async getLocais() {
+        try {
+          // const resources = await SystemManagement.TaskService.getAlltickets()
+          let resources = await Local_Armazenamento.DataService.getLocais();
+          this.locais = resources.data;
+        } catch(error) {
+          console.log(error);
+        }
+      },
+
+      async getGrupos() {
+        try {
+          // const resources = await SystemManagement.TaskService.getAlltickets()
+          let resources = await Grupo_Material.DataService.getGrupos();
+          this.gruposMaterial = resources.data;
+        } catch(error) {
+          console.log(error);
+        }
+      },
+
       editItem (item) {
         this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
+        this.fabricante = Object.assign({}, item.fabricante)
         this.dialog = true
       },
 
