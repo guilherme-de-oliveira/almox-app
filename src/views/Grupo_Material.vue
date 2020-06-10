@@ -43,7 +43,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="3">
-                        <v-text-field v-model="editedItem.idGrupo" label="idGrupo" disabled></v-text-field>
+                        <v-text-field v-model="editedItem.id_grupo_material" label="idGrupo" disabled></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="7">
                         <v-text-field v-model="editedItem.descricao" label="descricao"></v-text-field>
@@ -104,7 +104,7 @@ import Grupo_Material from '../services/Grupo_Material.js';
           text: 'ID Grupo',
           align: 'start',
           sortable: false,
-          value: 'idGrupo',
+          value: 'id_grupo_material',
         },
         { text: 'Descricao', value: 'descricao' },
         { text: 'Ação', value: 'actions', sortable: false },
@@ -112,11 +112,11 @@ import Grupo_Material from '../services/Grupo_Material.js';
       data: [],
       editedIndex: -1,
       editedItem: {
-        idGrupo: '',
+        id_grupo_material: '',
         descricao: '',
       },
       defaultItem: {
-        idGrupo: '',
+        id_grupo_material: '',
         descricao: 0,
       },
     }),
@@ -137,7 +137,7 @@ import Grupo_Material from '../services/Grupo_Material.js';
       try {
         // const resources = await SystemManagement.TaskService.getAlltickets()
         let resources = await Grupo_Material.DataService.getGrupos();
-        this.data = resources;
+        this.data = resources.data;
       } catch(error) {
         console.log(error);
       }
