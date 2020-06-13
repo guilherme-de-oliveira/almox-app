@@ -43,7 +43,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.requisicao" label="N Requisição" disabled></v-text-field>
+                        <v-text-field v-model="editedItem.id_requisicao" label="ID Requisição" disabled></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
                         <v-menu
@@ -70,24 +70,24 @@
                         </v-menu>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.solicitante" label="Solicitante"></v-text-field>
+                        <v-text-field v-model="editedItem.funcionario.id_funcionario" label="Solicitante" disabled></v-text-field>
                       </v-col>
                     </v-row>
-                    <v-row>
+                    <v-row v-if="editedIndex === -1">
                       <span>Item</span>
                     </v-row>
-                    <v-row>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.requisicao" label="ID Requisição" disabled></v-text-field>
-                      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.codMaterial" label="Cod Material"></v-text-field>
+                    <v-row v-if="editedIndex === -1">
+                      <!-- <v-col cols="12" sm="6" md="4">
+                        <v-text-field v-model="editedItem.id_requisicao" label="ID Requisição" disabled></v-text-field>
+                      </v-col> -->
+                      <v-col cols="12" sm="6" md="6">
+                        <v-text-field v-model="editedItem.id_material" label="Cod Material"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2">
-                        <v-text-field v-model="editedItem.protein" label="Qtde"></v-text-field>
+                        <v-text-field v-model="editedItem.qtde" label="Qtde"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2" v-if="editedIndex === -1">
-                        <v-btn class="mx-2" fab dark small color="primary">
+                        <v-btn class="mx-2" fab dark small color="primary" @click="getMaterialById(editedItem)">
                           <v-icon dark>mdi-plus</v-icon>
                         </v-btn>
                       </v-col>
@@ -100,15 +100,29 @@
                             <th class="text-left">Código</th>
                             <th class="text-left">Nome</th>
                             <th class="text-left">Qtde</th>
+                            <th class="text-left">Qtde Atendida</th>
+                            <th class="text-left">Action</th>
                           </tr>
                         </thead>
-                        <tbody>
-                          <tr v-for="item in addedItems" :key="item.codigo">
-                            <td>{{ item.codigo }}</td>
-                            <td>{{ item.nome }}</td>
-                            <td>{{ item.quantidade }}</td>
+                        <tbody v-if="editedIndex === -1">
+                          <tr v-for="item in addedItems" :key="item.id_material">
+                           <td>{{ item.id_material }}</td>
+                            <td>{{ item.descricao }}</td>
+                            <td>{{ item.qtde }}</td>
+                            <td>-</td>
+                            <td><v-icon small @click="deleteAddMaterial(item)">mdi-delete</v-icon></td>
                           </tr>
                         </tbody>
+                        <tbody v-else><!-- edit items -->
+                           <tr v-for="item in editedItem.requisicao_material" :key="item.id_material">
+                            <td>{{ item.material.id_material }}</td>
+                            <td>{{ item.material.descricao }}</td>
+                            <td>{{ item.qtde }}</td>
+                            <td><v-text-field style="max-width: 50px;" v-model="item.qtde_atendida" label="Qtde Atendida"></v-text-field></td>
+                            <td><v-icon small @click="deleteMaterial(item)">mdi-delete</v-icon></td>
+                          </tr>
+                        </tbody>
+                        
                       </template>
                     </v-simple-table>
                   </v-row>
@@ -147,6 +161,9 @@
 <script>
 // import Cards from '../components/Cards';
 import Requisicao from '../services/Requisicao';
+import Material from '../services/Material';
+
+var _ = require('lodash');
 
   export default {
     data: () => ({
@@ -156,16 +173,17 @@ import Requisicao from '../services/Requisicao';
       menu: false,
       modal: false,
       menu2: false,
+      quantidade: Number,
       dialog: false,
       headers: [
         {
-          text: 'N requisição',
+          text: 'ID requisição',
           align: 'start',
           sortable: false,
-          value: 'requisicao',
+          value: 'id_requisicao',
         },
         { text: 'Data', value: 'data' },
-        { text: 'Solicitante', value: 'solicitante' },
+        { text: 'Solicitante', value: 'funcionario.nome' },
         { text: 'Qtde', value: 'quantidade' },
         { text: 'Status', value: 'status' },
         { text: 'Ação', value: 'actions', sortable: false },
@@ -174,18 +192,20 @@ import Requisicao from '../services/Requisicao';
       addedItems: [],
       editedIndex: -1,
       editedItem: {
-        requisicao: '',
+        id_requisicao: '',
         data: '',
-        solicitante: '',
-        quantidade: '',
         status: '',
+        funcionario:{
+          id_funcionario: ''
+        }
       },
       defaultItem: {
         requisicao: '',
         data: '',
-        solicitante: '',
-        quantidade: '',
         status: '',
+        funcionario:{
+          id_funcionario: ''
+        }
       },
     }),
 
@@ -203,10 +223,16 @@ import Requisicao from '../services/Requisicao';
 
     async mounted() {
       try {
-        // const resources = await SystemManagement.TaskService.getAlltickets()
         let resources = await Requisicao.DataService.getRequisicoes();
-        // console.log(resources);
-        this.data = resources;
+        console.log(resources);
+        this.data = resources.data;
+
+//QUANTIDADE QTDE DA REQUISICAO
+        // this.data.forEach(function(x, index) {
+        //   console.log(this.data[index])
+        //   this.data[index].quantidadeMaterial = this.data[index].requisicao_material.lenght();
+          
+        // });
       } catch(error) {
         console.log(error);
       }
@@ -216,7 +242,8 @@ import Requisicao from '../services/Requisicao';
       editItem (item) {
         this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
-        this.dialog = true
+        console.log(this.editedItem);
+        this.dialog = true;
       },
 
       deleteItem (item) {
@@ -255,6 +282,7 @@ import Requisicao from '../services/Requisicao';
           
         } else { 
           //Add Item
+          this.editedItem.requisicao_material = this.addedItems;
           console.log(this.editedItem);
 
           try {
@@ -274,6 +302,58 @@ import Requisicao from '../services/Requisicao';
         this.addedItems.push(this.editedItem);
         this.editedItem = {};
         console.log(this.addedItems);
+      },
+
+      deleteMaterial(item) {
+        this.data.forEach(function(y){
+          if(y.id_requisicao == item.id_requisicao){
+            _.remove(y.requisicao_material, function (z) {
+              return z.id_material === item.id_material;
+            });
+          }
+        });
+
+        this.removeItem(item);
+      },
+
+      deleteAddMaterial(item) {
+        const index = this.data.indexOf(item)
+        if (confirm('Deletar Item?')) {
+          try{
+              this.addedItems.splice(index, 1)
+              // alert("Response: ", response);
+          } catch (err) {
+            alert(err);
+          }
+        }
+      },
+
+      removeItem(item) {
+        _.remove(this.editedItem, function(x) {
+          return item.id_material === x.id_material;
+        });
+        
+        this.editedItem = Object.assign({}, this.editedItem);
+      },
+
+      async getMaterialById(item) {
+        console.log(item);
+        try {
+          // const resources = await SystemManagement.TaskService.getAlltickets()
+          let resources = await Material.DataService.getMaterialById(item);
+          console.log(resources.data);
+          // resources.data.quantidade = item.quantidade;
+          resources.data.qtde = item.qtde;
+          // this.addedItems = resources.data;
+          this.addedItems.push(resources.data);
+          // var tes=this.addedItems.indexOf(item.id_material);
+          
+          this.editedItem = {};
+          console.log(this.addedItems);
+        } catch(error) {
+          console.log(error);
+          alert('Material não encontrado! Insira um Código de Material Válido!');
+        }
       }
     }
   } 

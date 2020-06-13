@@ -24,8 +24,20 @@ class DataService {
         return new Promise( (resolve, reject) => { //retirei o ASYNC
             try {
                 // const res = mockData.materiais;
- const res = axios.get('http://almoxarifado-tg.sa-east-1.elasticbeanstalk.com/material');
+                const res = axios.get('http://almoxarifado-tg.sa-east-1.elasticbeanstalk.com/material');
+                
+                resolve (res);
+            } catch(err) {
+                reject(err)
+            }
+        })
+    }
 
+    static getMaterialById(item) {
+        return new Promise( (resolve, reject) => { //retirei o ASYNC
+            try {
+                const res = axios.get(`http://almoxarifado-tg.sa-east-1.elasticbeanstalk.com/material/${item.id_material}`);
+                
                 console.log(res);
                 resolve (res);
             } catch(err) {
