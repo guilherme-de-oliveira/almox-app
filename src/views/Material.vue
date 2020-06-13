@@ -50,23 +50,32 @@
                       </v-col>
                     </v-row>
                     <v-row>
-                      <!-- <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.id_fabricante" label="ID Fabricante"></v-text-field>
-                      </v-col> -->
                       <v-col class="d-flex" cols="12" sm="4">
-        <v-select
-          :items="fabricantes"
-          item-text="nome_fantasia"
-          item-value="id_fabricante"
-          label="Fabricante"
-          v-model="fabricante.id_fabricante"
-        ></v-select>
-      </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.id_local" label="ID Local"></v-text-field>
+                        <v-select
+                          :items="fabricantes"
+                          item-text="nome_fantasia"
+                          item-value="id_fabricante"
+                          label="Fabricante"
+                          v-model="fabricante.id_fabricante"
+                        ></v-select>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.id_grupo_material" label="ID Grupo Material"></v-text-field>
+                      <v-col class="d-flex" cols="12" sm="4">
+                        <v-select
+                          :items="locais"
+                          item-text="id_local"
+                          item-value="id_local"
+                          label="Local"
+                          v-model="local.id_local"
+                        ></v-select>
+                      </v-col>
+                      <v-col class="d-flex" cols="12" sm="4">
+                        <v-select
+                          :items="gruposMaterial"
+                          item-text="descricao"
+                          item-value="id_grupo_material"
+                          label="Grupo Material"
+                          v-model="grupoMaterial.id_grupo_material"
+                        ></v-select>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -95,7 +104,7 @@
                         </v-btn>
                       </v-col>
                     </v-row>
-                  <v-row>
+                  <v-row v-if="editedIndex === -1">
                     <v-simple-table dense>
                       <template v-slot:default>
                         <thead>
@@ -167,7 +176,9 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
       fabricantes: [],
       fabricante: {},
       gruposMaterial: [],
+      grupoMaterial: {},
       locais: [],
+      local:{},
       headers: [
         {
           text: 'ID Material',
@@ -184,6 +195,17 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
       ],
       editedIndex: -1,
       editedItem: {
+        id_material: "",
+        id_un_medida: "",
+        id_fabricante: "",
+        id_local: "",
+        cod_barra: "",
+        estoque_atual: "",
+        estoque_minimo: "",
+        id_grupo_material: "",
+        descricao: ""
+      },
+      defaultItem: {
         id_material: "",
         id_un_medida: "",
         id_fabricante: "",
@@ -213,17 +235,17 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
       try {
         // const resources = await SystemManagement.TaskService.getAlltickets()
         let resources = await Material.DataService.getMateriais();
-        console.log(resources.data);
+        // console.log(resources.data);
         this.data = resources.data;
 
 //arrumar
-        let resources1 = await Fabricante.DataService.getFabricantes();
-        this.fabricantes = resources1.data;
-        console.log(resources1.data);
+        // let resources1 = await Fabricante.DataService.getFabricantes();
+        // this.fabricantes = resources1.data;
+        // console.log(resources1.data);
       } catch(error) {
         console.log(error);
       }
-      // this.getFabricantes();
+      this.getFabricantes();
       this.getLocais();
       this.getGrupos();
     },
@@ -234,7 +256,7 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
           // const resources = await SystemManagement.TaskService.getAlltickets()
           let resources = await Fabricante.DataService.getFabricantes();
           this.fabricantes = resources.data;
-          console.log(resources.data);
+          // console.log(resources.data);
         } catch(error) {
           console.log(error);
         }
@@ -245,6 +267,7 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
           // const resources = await SystemManagement.TaskService.getAlltickets()
           let resources = await Local_Armazenamento.DataService.getLocais();
           this.locais = resources.data;
+          console.log(resources);
         } catch(error) {
           console.log(error);
         }
@@ -261,10 +284,12 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
       },
 
       editItem (item) {
-        this.editedIndex = this.data.indexOf(item)
-        this.editedItem = Object.assign({}, item)
-        this.fabricante = Object.assign({}, item.fabricante)
-        this.dialog = true
+        this.editedIndex = this.data.indexOf(item);
+        this.editedItem = Object.assign({}, item);
+        this.fabricante = Object.assign({}, item.fabricante);
+        this.grupoMaterial = Object.assign({}, item.grupo_material);
+        this.local = Object.assign({}, item.local);
+        this.dialog = true;
       },
 
       deleteItem (item) {
