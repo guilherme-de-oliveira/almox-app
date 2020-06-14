@@ -192,9 +192,11 @@ import Grupo_Material from '../services/Grupo_Material.js';
           console.log(this.editedItem);
 
           try {
-            let response = Grupo_Material.DataService.setGrupo();
-            this.data.push(this.editedItem);
-            alert("Response: ", response);
+            let response = Grupo_Material.DataService.setGrupo(this.editedItem);
+            // let resources = Grupo_Material.DataService.getGrupos();
+            // this.data = resources.data;
+            alert("Response: ", response.statusText);
+            console.log("Response: ", response.status);
           } catch(error) {
             alert(error);
           }

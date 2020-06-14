@@ -30,10 +30,11 @@ class DataService {
         })
     }
 
-    static setFabricante() {
+    static setFabricante(data) {
+        console.log(data);
         return new Promise((resolve, reject) => {
             try {
-                const res = "Cadastrado!";
+                const res = axios.post(url, data);
                 resolve (res);
             } catch(err) {
                 reject(err)

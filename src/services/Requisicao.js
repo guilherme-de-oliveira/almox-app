@@ -14,10 +14,15 @@ class DataService {
         })
     }
 
-    static setRequisicao() {
+    static setRequisicao(data) {
+        console.log(data);
         return new Promise((resolve, reject) => {
             try {
-                const res = "Cadastrado!";
+                const res = axios.post(url, 
+                    data
+                    
+                );
+                // const res = "Cadastrado!";
                 resolve (res);
             } catch(err) {
                 reject(err)

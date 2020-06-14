@@ -198,7 +198,7 @@ export default {
           console.log(this.editedItem);
 
           try {
-            let response = Local_Armazenamento.DataService.setLocal();
+            let response = Local_Armazenamento.DataService.setLocal(this.editedItem);
             this.data.push(this.editedItem);
             alert("Response: ", response);
           } catch(error) {

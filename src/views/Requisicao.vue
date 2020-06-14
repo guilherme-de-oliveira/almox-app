@@ -70,7 +70,7 @@
                         </v-menu>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.funcionario.id_funcionario" label="Solicitante" disabled></v-text-field>
+                        <v-text-field v-model="editedItem.funcionario.id_funcionario" label="Solicitante"></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row v-if="editedIndex === -1">
@@ -190,13 +190,15 @@ var _ = require('lodash');
       ],
       data: [],
       addedItems: [],
+      sendItems: {},
+      array: [],
       editedIndex: -1,
       editedItem: {
         id_requisicao: '',
         data: '',
         status: '',
         funcionario:{
-          id_funcionario: ''
+          id_funcionario: 7
         }
       },
       defaultItem: {
@@ -204,7 +206,7 @@ var _ = require('lodash');
         data: '',
         status: '',
         funcionario:{
-          id_funcionario: ''
+          id_funcionario: 7
         }
       },
     }),
@@ -239,6 +241,18 @@ var _ = require('lodash');
     },
 
     methods: {
+      log() {
+      for (let i = 0; i < arguments.length; i += 1) {
+        if (typeof (arguments[i]) === 'object') {
+          try {
+            arguments[i] = JSON.parse(JSON.stringify(arguments[i]));
+          } catch (e) {
+            console.error(e);
+          }
+        }
+      }
+      console.log(...arguments);
+    },
       editItem (item) {
         this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
@@ -280,13 +294,24 @@ var _ = require('lodash');
             alert(error);
           }
           
-        } else { 
+        } else {
           //Add Item
-          this.editedItem.requisicao_material = this.addedItems;
-          console.log(this.editedItem);
+          // this.editedItem.requisicao_material = this.addedItems;
+          // console.log(this.editedItem);
+          // console.log(this.addedItems);
 
+          // Object.defineProperty(this.sendItems, 'materiais', { value: this.addedItems });
+          var t = {};
+          t.id_funcionario = this.sendItems.id_funcionario;
+          t.materiais = this.addedItems;
+          console.log(t);
+          // var test = Object.assign(this.sendItems);
+          // let t = {};
+          // if(this.sendItems.__ob__){
+          
+          
           try {
-            let response = Requisicao.DataService.setRequisicao();
+            let response = Requisicao.DataService.setRequisicao(t);
             this.data.push(this.editedItem);
             alert("Response: ", response);
           } catch(error) {
@@ -296,13 +321,15 @@ var _ = require('lodash');
         this.close()
       },
 
-      addItems(item) {
-        console.log(item)
+      // addItems(item) {
+      //   console.log(item)
 
-        this.addedItems.push(this.editedItem);
-        this.editedItem = {};
-        console.log(this.addedItems);
-      },
+      //   this.addedItems.push(this.editedItem);
+      //   // this.editedItem = {};
+      //   this.editedItem = Object.assign({}, this.defaultItem)
+
+      //   console.log(this.addedItems);
+      // },
 
       deleteMaterial(item) {
         this.data.forEach(function(y){
@@ -338,22 +365,44 @@ var _ = require('lodash');
 
       async getMaterialById(item) {
         console.log(item);
-        try {
+        // try {
           // const resources = await SystemManagement.TaskService.getAlltickets()
-          let resources = await Material.DataService.getMaterialById(item);
+          // let resources = ''
+          await Material.DataService.getMaterialById(item).then((resources) => {
+            console.log(resources);
+          this.array.id_material = resources.data.id_material;
+          this.array.descricao = resources.data.descricao;
+          this.array.qtde = item.qtde;
+
+          console.log(this.array);
           console.log(resources.data);
           // resources.data.quantidade = item.quantidade;
           resources.data.qtde = item.qtde;
           // this.addedItems = resources.data;
-          this.addedItems.push(resources.data);
-          // var tes=this.addedItems.indexOf(item.id_material);
+          this.sendItems.id_funcionario = this.editedItem.funcionario.id_funcionario;
+          // this.sendItems.data = this.editedItem.data;
+          // this.addedItems.push(resources.data);
+          // if(!this.addedItems.materiais) {
+          //   Object.defineProperty(this.addedItems, 'materiais', { value: resources.data, writable: true, });
+            
+          // } else {
+            console.log(this.addedItems);
+            this.addedItems.push(JSON.parse( JSON.stringify(this.array)));
+            // Object.defineProperty(this.addedItems, 'materiais', { value: resources.data });
+          //}// var tes=this.addedItems.indexOf(item.id_material);
           
-          this.editedItem = {};
+          // this.editedItem = {};
+          this.editedItem = Object.assign({}, this.defaultItem)
+        // _.remove(this.array, function(x) {
+        //   return x === '__ob__';
+        // });
           console.log(this.addedItems);
-        } catch(error) {
-          console.log(error);
-          alert('Material não encontrado! Insira um Código de Material Válido!');
-        }
+        // } catch(error) {
+        //   console.log(error);
+        //   alert('Material não encontrado! Insira um Código de Material Válido!');
+        // }
+          });
+          
       }
     }
   } 

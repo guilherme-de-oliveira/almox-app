@@ -125,17 +125,17 @@ import Fabricante from '../services/Fabricante.js';
       editedIndex: -1,
       editedItem: {
         cnpj: '',
-        nome: '',
-        razaoSocial: '',
+        nome_fantasia: '',
+        razao_social: '',
         endereco: '',
         ddd: '',
         telefone: ''
       },
       defaultItem: {
         cnpj: '',
-        nome: 0,
-        razaoSocial: 0,
-        endereco: 0,
+        nome: '',
+        razaoSocial: '',
+        endereco: '',
       },
     }),
 
@@ -205,13 +205,14 @@ import Fabricante from '../services/Fabricante.js';
         } else { 
           //Add Item
           console.log(this.editedItem);
-
+          
           try {
-            let response = Fabricante.DataService.setFabricante();
+            let response = Fabricante.DataService.setFabricante(this.editedItem);
             this.data.push(this.editedItem);
             alert("Response: ", response);
           } catch(error) {
             alert(error);
+            alert(error.message);
           }
         }
         this.close()
