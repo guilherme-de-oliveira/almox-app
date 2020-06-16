@@ -85,26 +85,26 @@
                         </tr>
                       </thead>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.estoque_atual" label="Atual"></v-text-field>
+                        <v-text-field type="number" v-model="editedItem.estoque_atual" label="Atual"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.estoque_minimo" label="Mínimo"></v-text-field>
+                        <v-text-field type="number" v-model="editedItem.estoque_minimo" label="Mínimo"></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
                       <v-col cols="12" sm="6" md="6">
-                        <v-text-field v-model="editedItem.cod_barra" label="Código de barra"></v-text-field>
+                        <v-text-field :counter="13" v-model="editedItem.cod_barra" label="Código de barra"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.id_un_medida" label="Un Medida"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2" v-if="editedIndex === -1">
-                        <v-btn class="mx-2" fab dark small color="primary" @click="addItems(editedItem)">
+                        <!-- <v-btn class="mx-2" fab dark small color="primary" @click="addItems(editedItem)">
                           <v-icon dark>mdi-plus</v-icon>
-                        </v-btn>
+                        </v-btn> -->
                       </v-col>
                     </v-row>
-                  <v-row v-if="editedIndex === -1">
+                  <!-- <v-row v-if="editedIndex === -1">
                     <v-simple-table dense>
                       <template v-slot:default>
                         <thead>
@@ -116,12 +116,12 @@
                         <tbody>
                           <tr v-for="item in addedItems" :key="item.descricao">
                             <td>{{ item.descricao }}</td>
-                            <td>{{ item.estoque }}</td>
+                            <td>{{ item.estoque_atual }}</td>
                           </tr>
                         </tbody>
                       </template>
                     </v-simple-table>
-                  </v-row>
+                  </v-row> -->
                 </v-container>
               </v-card-text>
 
@@ -195,28 +195,30 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
       ],
       editedIndex: -1,
       editedItem: {
-        id_material: "",
+        id: '',
         id_un_medida: "",
         id_fabricante: "",
         id_local: "",
         cod_barra: "",
-        estoque_atual: "",
-        estoque_minimo: "",
+        custo: 1.0,
+        estoque_atual: 0.0,
+        estoque_minimo: 0.0,
         id_grupo_material: "",
         descricao: ""
       },
       defaultItem: {
         id_material: "",
-        id_un_medida: "",
+        id_un_medida: "Un",
         id_fabricante: "",
         id_local: "",
         cod_barra: "",
-        estoque_atual: "",
-        estoque_minimo: "",
+        custo: 1.0,
+        estoque_atual: 0.0,
+        estoque_minimo: 0.0,
         id_grupo_material: "",
         descricao: ""
       },
-      addedItems: [],
+      addedItems: {},
     }),
 
     computed: {
@@ -251,6 +253,38 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
     },
 
     methods: {
+      save () {
+        if (this.editedIndex > -1) {
+          //Update Item
+          try {
+            Object.assign(this.data[this.editedIndex], this.editedItem);
+            console.log(this.editedItem);
+            let response = Material.DataService.updateMaterial();
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
+          
+        } else { 
+          //Add Item
+          console.log(this.editedItem);
+          this.editedItem.id_grupo_material = this.grupoMaterial.id_grupo_material;
+          this.editedItem.id_fabricante = this.fabricante.id_fabricante;
+          this.editedItem.id_local = this.local.id_local;
+
+          this.editedItem.estoque_atual = parseInt(this.editedItem.estoque_atual);
+          this.editedItem.estoque_minimo = parseInt(this.editedItem.estoque_minimo);
+          try {
+            let response = Material.DataService.setMaterial(this.editedItem);
+            // this.data.push(this.editedItem);
+            alert("Response: ", response);
+          } catch(error) {
+            alert(error);
+          }
+        }
+        this.close()
+      },
+
       async getFabricantes() {
         try {
           // const resources = await SystemManagement.TaskService.getAlltickets()
@@ -314,40 +348,13 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
         })
       },
 
-     save () {
-        if (this.editedIndex > -1) {
-          //Update Item
-          try {
-            Object.assign(this.data[this.editedIndex], this.editedItem);
-            console.log(this.editedItem);
-            let response = Material.DataService.updateMaterial();
-            alert("Response: ", response);
-          } catch(error) {
-            alert(error);
-          }
-          
-        } else { 
-          //Add Item
-          console.log(this.editedItem);
+      // addItems(item) {
+      //   console.log(item)
 
-          try {
-            let response = Material.DataService.setMaterial();
-            this.data.push(this.editedItem);
-            alert("Response: ", response);
-          } catch(error) {
-            alert(error);
-          }
-        }
-        this.close()
-      },
-
-      addItems(item) {
-        console.log(item)
-
-        this.addedItems.push(this.editedItem);
-        this.editedItem = {};
-        console.log(this.addedItems);
-      }
+      //   this.addedItems += item;
+      //   this.editedItem = {};
+      //   console.log(this.addedItems);
+      // }
     }
   } 
 </script>

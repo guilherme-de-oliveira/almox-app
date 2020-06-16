@@ -224,36 +224,20 @@ var _ = require('lodash');
       },
     },
 
-    async mounted() {
-      try {
-        let resources = await Requisicao.DataService.getRequisicoes();
-        console.log(resources);
-        this.data = resources.data;
-
-//QUANTIDADE QTDE DA REQUISICAO
-        // this.data.forEach(function(x, index) {
-        //   console.log(this.data[index])
-        //   this.data[index].quantidadeMaterial = this.data[index].requisicao_material.lenght();
-          
-        // });
-      } catch(error) {
-        console.log(error);
-      }
+    mounted() {
+      this.getRequisicoes();
     },
 
     methods: {
-      log() {
-      for (let i = 0; i < arguments.length; i += 1) {
-        if (typeof (arguments[i]) === 'object') {
-          try {
-            arguments[i] = JSON.parse(JSON.stringify(arguments[i]));
-          } catch (e) {
-            console.error(e);
-          }
+      async getRequisicoes() {
+        try {
+          let resources = await Requisicao.DataService.getRequisicoes();
+          console.log(resources);
+          this.data = resources.data;
+        } catch(error) {
+          console.log(error);
         }
-      }
-      console.log(...arguments);
-    },
+      },
       editItem (item) {
         this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
@@ -311,9 +295,11 @@ var _ = require('lodash');
           // if(this.sendItems.__ob__){
           
           try {
-            let response = Requisicao.DataService.setRequisicao(this.sendItems);
-            this.data.push(this.editedItem);
+            let response = Requisicao.DataService.setRequisicao(this.sendItems, 5000);
+            
             alert("Response: ", response);
+
+            this.getRequisicoes()
           } catch(error) {
             alert(error);
             console.log(error);

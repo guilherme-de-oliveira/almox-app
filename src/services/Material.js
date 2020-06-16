@@ -2,7 +2,7 @@
 const axios = require('axios');
 
 // import mockData from './mock-data.json';
-// const url = 'url',
+const url = 'http://almoxarifado-tg.sa-east-1.elasticbeanstalk.com/material/';
 
 // class TaskService {
 //     static getAllTickets() {
@@ -24,7 +24,7 @@ class DataService {
         return new Promise( (resolve, reject) => { //retirei o ASYNC
             try {
                 // const res = mockData.materiais;
-                const res = axios.get('http://almoxarifado-tg.sa-east-1.elasticbeanstalk.com/material');
+                const res = axios.get(url);
                 
                 resolve (res);
             } catch(err) {
@@ -36,7 +36,7 @@ class DataService {
     static getMaterialById(item) {
         return new Promise( (resolve, reject) => { //retirei o ASYNC
             try {
-                const res = axios.get(`http://almoxarifado-tg.sa-east-1.elasticbeanstalk.com/material/${item.id_material}`);
+                const res = axios.get(url`${item.id_material}`);
                 
                 console.log(res);
                 resolve (res);
@@ -46,10 +46,12 @@ class DataService {
         })
     }
 
-    static setMaterial() {
+    static setMaterial(data) {
+        console.log(data);
         return new Promise((resolve, reject) => {
             try {
-                const res = "Cadastrado!";
+                const res = axios.post(url, data);
+                console.log(res);
                 resolve (res);
             } catch(err) {
                 reject(err)
