@@ -190,8 +190,9 @@ var _ = require('lodash');
       ],
       data: [],
       addedItems: [],
-      sendItems: {},
-      array: [],
+      sendItems: {
+        'materiais': {}
+      },
       editedIndex: -1,
       editedItem: {
         id_requisicao: '',
@@ -301,21 +302,21 @@ var _ = require('lodash');
           // console.log(this.addedItems);
 
           // Object.defineProperty(this.sendItems, 'materiais', { value: this.addedItems });
-          var t = {};
-          t.id_funcionario = this.sendItems.id_funcionario;
-          t.materiais = this.addedItems;
-          console.log(t);
+          // var t = {};
+          // t.id_funcionario = this.sendItems.id_funcionario;
+          // t.materiais = this.addedItems;
+          // console.log(t);
           // var test = Object.assign(this.sendItems);
           // let t = {};
           // if(this.sendItems.__ob__){
           
-          
           try {
-            let response = Requisicao.DataService.setRequisicao(t);
+            let response = Requisicao.DataService.setRequisicao(this.sendItems);
             this.data.push(this.editedItem);
             alert("Response: ", response);
           } catch(error) {
             alert(error);
+            console.log(error);
           }
         }
         this.close()
@@ -370,9 +371,10 @@ var _ = require('lodash');
           // let resources = ''
           await Material.DataService.getMaterialById(item).then((resources) => {
             console.log(resources);
-          this.array.id_material = resources.data.id_material;
-          this.array.descricao = resources.data.descricao;
-          this.array.qtde = item.qtde;
+          var array = {};
+          array.id_material = resources.data.id_material;
+          array.descricao = resources.data.descricao;
+          array.qtde = item.qtde;
 
           console.log(this.array);
           console.log(resources.data);
@@ -387,7 +389,7 @@ var _ = require('lodash');
             
           // } else {
             console.log(this.addedItems);
-            this.addedItems.push(JSON.parse( JSON.stringify(this.array)));
+            this.addedItems.push(array); 
             // Object.defineProperty(this.addedItems, 'materiais', { value: resources.data });
           //}// var tes=this.addedItems.indexOf(item.id_material);
           
@@ -396,6 +398,7 @@ var _ = require('lodash');
         // _.remove(this.array, function(x) {
         //   return x === '__ob__';
         // });
+        this.sendItems.materiais= this.addedItems;
           console.log(this.addedItems);
         // } catch(error) {
         //   console.log(error);

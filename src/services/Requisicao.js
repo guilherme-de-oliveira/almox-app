@@ -18,13 +18,12 @@ class DataService {
         console.log(data);
         return new Promise((resolve, reject) => {
             try {
-                const res = axios.post(url, 
-                    data
-                    
-                );
+                const res = axios.post(url, data);
+                console.log(res);
                 // const res = "Cadastrado!";
                 resolve (res);
             } catch(err) {
+                console.log(err)
                 reject(err)
             }
         })
