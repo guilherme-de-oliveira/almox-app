@@ -95,14 +95,23 @@
                       <v-col cols="12" sm="6" md="6">
                         <v-text-field :counter="13" v-model="editedItem.cod_barra" label="Código de barra"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
+                      <!-- <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.id_un_medida" label="Un Medida"></v-text-field>
+                      </v-col> -->
+                      <v-col class="d-flex" cols="12" sm="4">
+                        <v-select
+                          :items="unidadesMedida"
+                          item-text="descricao"
+                          item-value="id_un_medida"
+                          label="Unidade Medida"
+                          v-model="unidadeMedida.id_un_medida"
+                        ></v-select>
                       </v-col>
-                      <v-col cols="12" sm="6" md="2" v-if="editedIndex === -1">
+                      <!-- <v-col cols="12" sm="6" md="2" v-if="editedIndex === -1"> -->
                         <!-- <v-btn class="mx-2" fab dark small color="primary" @click="addItems(editedItem)">
                           <v-icon dark>mdi-plus</v-icon>
                         </v-btn> -->
-                      </v-col>
+                      <!-- </v-col> -->
                     </v-row>
                   <!-- <v-row v-if="editedIndex === -1">
                     <v-simple-table dense>
@@ -177,6 +186,8 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
       fabricante: {},
       gruposMaterial: [],
       grupoMaterial: {},
+      unidadesMedida: [],
+      unidadeMedida: {},
       locais: [],
       local:{},
       headers: [
@@ -208,7 +219,7 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
       },
       defaultItem: {
         id_material: "",
-        id_un_medida: "Un",
+        id_un_medida: "",
         id_fabricante: "",
         id_local: "",
         cod_barra: "",
@@ -237,7 +248,7 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
       try {
         // const resources = await SystemManagement.TaskService.getAlltickets()
         let resources = await Material.DataService.getMateriais();
-        // console.log(resources.data);
+        console.log(resources.data);
         this.data = resources.data;
 
 //arrumar
@@ -250,6 +261,7 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
       this.getFabricantes();
       this.getLocais();
       this.getGrupos();
+      this.getUnidadesMedida();
     },
 
     methods: {
@@ -271,6 +283,7 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
           this.editedItem.id_grupo_material = this.grupoMaterial.id_grupo_material;
           this.editedItem.id_fabricante = this.fabricante.id_fabricante;
           this.editedItem.id_local = this.local.id_local;
+          this.editedItem.id_un_medida = this.unidadeMedida.id_un_medida;
 
           this.editedItem.estoque_atual = parseInt(this.editedItem.estoque_atual);
           this.editedItem.estoque_minimo = parseInt(this.editedItem.estoque_minimo);
@@ -317,22 +330,32 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
         }
       },
 
+      async getUnidadesMedida() {
+        try {
+          // const resources = await SystemManagement.TaskService.getAlltickets()
+          let resources = await Material.DataService.getUnidadesMedida();
+          this.unidadesMedida = resources.data;
+        } catch(error) {
+          console.log(error);
+        }
+      },
+
       editItem (item) {
+        console.log(item);
         this.editedIndex = this.data.indexOf(item);
         this.editedItem = Object.assign({}, item);
         this.fabricante = Object.assign({}, item.fabricante);
         this.grupoMaterial = Object.assign({}, item.grupo_material);
+        this.unidadeMedida = Object.assign({}, item.un_medida);
         this.local = Object.assign({}, item.local);
         this.dialog = true;
       },
 
       deleteItem (item) {
-        const index = this.data.indexOf(item)
+        console.log(item);
         if (confirm('Deletar Item?')) {
           try{
-              console.log(this.editedItem);
-              let response = Material.DataService.deleteMaterial();
-              this.data.splice(index, 1)
+              let response = Material.DataService.deleteMaterial(item);
               alert("Response: ", response);
           } catch (err) {
             alert(err);

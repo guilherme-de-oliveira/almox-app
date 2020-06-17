@@ -234,6 +234,13 @@ var _ = require('lodash');
           let resources = await Requisicao.DataService.getRequisicoes();
           console.log(resources);
           this.data = resources.data;
+          this.data.forEach(function(x) {
+            console.log(x);
+            if(x.data) {
+              var d = new Date(x.data);
+              x.data = d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear();
+            }
+          });
         } catch(error) {
           console.log(error);
         }
