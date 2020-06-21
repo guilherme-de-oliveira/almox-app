@@ -156,14 +156,20 @@ import Grupo_Material from '../services/Grupo_Material.js';
       // },
       deleteItem (item) {
         const index = this.data.indexOf(item)
-        confirm('Deletar Item?');
-        try{
-            console.log(this.editedItem);
-            let response = Grupo_Material.DataService.deleteGrupo();
-            this.data.splice(index, 1)
-            alert("Response: ", response);
-        } catch (err) {
-          alert(err);
+        if(confirm('Deletar Item?')) {
+          try{
+              let response = Grupo_Material.DataService.deleteGrupo(item);
+              this.data.splice(index, 1)
+              response.then(function(valor) {
+                console.log(valor);
+                alert("Response: ", JSON.stringify(response));
+              }).catch(function (err){
+                console.log(err);
+                alert(err);
+              });
+          } catch (err) {
+            alert(err);
+          }
         }
       },
 
@@ -182,8 +188,10 @@ import Grupo_Material from '../services/Grupo_Material.js';
             Object.assign(this.data[this.editedIndex], this.editedItem);
             console.log(this.editedItem);
             let response = Grupo_Material.DataService.updateGrupo();
+            console.log("Response: ", response);
             alert("Response: ", response);
           } catch(error) {
+            console.log(error);
             alert(error);
           }
           

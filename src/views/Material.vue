@@ -319,8 +319,12 @@ Vue.component('downloadExcel', JsonExcel)
           this.editedItem.estoque_minimo = parseInt(this.editedItem.estoque_minimo);
           try {
             let response = Material.DataService.setMaterial(this.editedItem);
-            // this.data.push(this.editedItem);
-            alert("Response: ", response);
+              response.then(function(valor) {
+              console.log(valor.statusText)
+              alert(valor.statusText);
+            }).catch(function (err){
+              alert(err);
+            });
           } catch(error) {
             alert(error);
           }
@@ -330,10 +334,8 @@ Vue.component('downloadExcel', JsonExcel)
 
       async getFabricantes() {
         try {
-          // const resources = await SystemManagement.TaskService.getAlltickets()
           let resources = await Fabricante.DataService.getFabricantes();
           this.fabricantes = resources.data;
-          // console.log(resources.data);
         } catch(error) {
           console.log(error);
         }
@@ -341,7 +343,6 @@ Vue.component('downloadExcel', JsonExcel)
 
       async getLocais() {
         try {
-          // const resources = await SystemManagement.TaskService.getAlltickets()
           let resources = await Local_Armazenamento.DataService.getLocais();
           this.locais = resources.data;
           console.log(resources);
@@ -352,7 +353,6 @@ Vue.component('downloadExcel', JsonExcel)
 
       async getGrupos() {
         try {
-          // const resources = await SystemManagement.TaskService.getAlltickets()
           let resources = await Grupo_Material.DataService.getGrupos();
           this.gruposMaterial = resources.data;
         } catch(error) {
@@ -385,8 +385,13 @@ Vue.component('downloadExcel', JsonExcel)
         console.log(item);
         if (confirm('Deletar Item?')) {
           try{
-              let response = Material.DataService.deleteMaterial(item);
-              alert("Response: ", response);
+            let response = Material.DataService.deleteMaterial(item);
+            response.then(function(valor) {
+              console.log(valor.statusText)
+              alert(valor.statusText);
+            }).catch(function (err){
+              alert(err);
+            });
           } catch (err) {
             alert(err);
           }

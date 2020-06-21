@@ -32,10 +32,12 @@ class DataService {
         })
     }
 
-    static setSolicitacao() {
+    static setSolicitacao(data) {
+        console.log(data);
         return new Promise((resolve, reject) => {
             try {
-                const res = "Cadastrado!";
+                const res = axios.post(url, data);
+                console.log(res);
                 resolve (res);
             } catch(err) {
                 reject(err)

@@ -42,10 +42,11 @@ class DataService {
         })
     }
 
-    static updateFabricante() {
+    static updateFabricante(data) {
+        console.log(data);
         return new Promise((resolve, reject) => {
             try {
-                const res = "Atualizado!";
+                const res = axios.patch(url, data);
                 resolve (res);
             } catch(err) {
                 reject(err)
@@ -53,10 +54,10 @@ class DataService {
         })
     }
 
-    static deleteFabricante() {
+    static deleteFabricante(item) {
         return new Promise((resolve, reject) => {
             try {
-                const res = "Deletado!";
+                const res = axios.delete(url + '/'+ item.id_fabricante);
                 resolve (res);
             } catch(err) {
                 reject(err)

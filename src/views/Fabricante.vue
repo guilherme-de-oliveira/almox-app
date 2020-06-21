@@ -43,7 +43,7 @@
                   <v-container>
                     <v-row>
                       <v-col cols="12" sm="6" md="5">
-                        <v-text-field v-model="editedItem.cnpj" label="CNPJ"></v-text-field>
+                        <v-text-field v-model="editedItem.cnpj" label="CNPJ" disabled></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -171,14 +171,20 @@ import Fabricante from '../services/Fabricante.js';
 
       deleteItem (item) {
         const index = this.data.indexOf(item)
-        confirm('Deletar Item?');
-        try{
-            console.log(this.editedItem);
-            let response = Fabricante.DataService.deleteFabricante();
+        if(confirm('Deletar Item?')){
+          try{
+            let response = Fabricante.DataService.deleteFabricante(item);
             this.data.splice(index, 1)
-            alert("Response: ", response);
-        } catch (err) {
-          alert(err);
+            response.then(function(valor) {
+              console.log(valor);
+              alert("Response: ", JSON.stringify(response));
+            }).catch(function (err){
+              console.log(err);
+              alert(err);
+            });
+          } catch (err) {
+            alert(err);
+          }
         }
       },
 
@@ -196,8 +202,13 @@ import Fabricante from '../services/Fabricante.js';
           try {
             Object.assign(this.data[this.editedIndex], this.editedItem);
             console.log(this.editedItem);
-            let response = Fabricante.DataService.updateFabricante();
-            alert("Response: ", response);
+            let response = Fabricante.DataService.updateFabricante(this.editedItem);
+            response.then(function(valor) {
+              console.log(valor.statusText)
+              alert(valor.statusText);
+            }).catch(function (err){
+              alert(err);
+            });
           } catch(error) {
             alert(error);
           }
@@ -208,8 +219,12 @@ import Fabricante from '../services/Fabricante.js';
           
           try {
             let response = Fabricante.DataService.setFabricante(this.editedItem);
-            this.data.push(this.editedItem);
-            alert("Response: ", response);
+            response.then(function(valor) {
+              this.data.push(this.editedItem);
+              alert(valor);
+            }).catch(function (err){
+              alert(err);
+            });
           } catch(error) {
             alert(error);
             alert(error.message);

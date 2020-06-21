@@ -51,12 +51,17 @@ class DataService {
         })
     }
 
-    static deleteGrupo() {
+    static deleteGrupo(item) {
         return new Promise((resolve, reject) => {
             try {
-                const res = "Deletado!";
+                const res = axios.delete(url + '/'+ item.id_grupo_material);
+                // console.log(res)
+                // console.log(res)
                 resolve (res);
+                console.log(res)
+                // alert(res.request.response)
             } catch(err) {
+                console.log(err)
                 reject(err)
             }
         })
