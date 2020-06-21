@@ -24,6 +24,7 @@ class DataService {
         return new Promise( (resolve, reject) => { //retirei o ASYNC
             try {
                 // const res = mockData.materiais;
+                
                 const res = axios.get(url);
                 
                 resolve (res);
@@ -36,7 +37,7 @@ class DataService {
     static getMaterialById(item) {
         return new Promise( (resolve, reject) => { //retirei o ASYNC
             try {
-                const res = axios.get(url`${item.id_material}`);
+                const res = axios.get(url+item.id_material);
                 
                 console.log(res);
                 resolve (res);

@@ -29,10 +29,13 @@ class DataService {
         })
     }
 
-    static updateRequisicao() {
+    static updateRequisicao(item, data) {
+        console.log(item)
+        console.log(data)
         return new Promise((resolve, reject) => {
             try {
-                const res = "Atualizado!";
+                const res = axios.patch(url+ '/atender/' +item.id_requisicao, data);
+                console.log(res);
                 resolve (res);
             } catch(err) {
                 reject(err)
@@ -40,16 +43,18 @@ class DataService {
         })
     }
 
-    static deleteRequisicao() {
-        return new Promise((resolve, reject) => {
-            try {
-                const res = "Deletado!";
-                resolve (res);
-            } catch(err) {
-                reject(err)
-            }
-        })
-    }
+    // static deleteRequisicao(item) {
+    //     console.log(item);
+    //     return new Promise((resolve, reject) => {
+    //         try {
+    //             const res = axios.delete(url+'/'+item.id_requisicao);
+    //             console.log(res);
+    //             resolve (res);
+    //         } catch(err) {
+    //             reject(err)
+    //         }
+    //     })
+    // }
 }
 
 export default {

@@ -5,16 +5,31 @@
       <template v-slot:activator="{ on }">
         <v-btn color="primary" dark class="mb-2" v-on="on">New Item</v-btn>
       </template>
-      <v-col cols="12" sm="6">
-        <v-text-field
-          v-model="search"
-          append-icon="mdi-magnify"
-          label="Procurar"
-          solo
-          hide-details
-          max-size="300px"
-        ></v-text-field>
-      </v-col>
+      <v-row>
+        <v-col cols="12" sm="6">
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Procurar"
+            solo
+            hide-details
+            max-size="300px"
+          ></v-text-field>
+        </v-col>
+        <v-col cols="12" sm="6" md="5"></v-col>
+        <v-col cols="12" sm="6" md="1">
+          <download-excel
+            :data = "this.data"
+            :fields = "this.json_fields"
+            :footer = "this.data_now"
+            :header = "this.data_now"
+            >
+            <v-btn class="ma-2" color="success" dark>
+              <v-icon dark>mdi-download</v-icon>
+            </v-btn>
+          </download-excel>
+        </v-col>
+      </v-row>
       <v-data-table
         :headers="headers"
         :items="data"
@@ -171,12 +186,16 @@ import Material from '../services/Material';
 import Fabricante from '../services/Fabricante.js';
 import Grupo_Material from '../services/Grupo_Material.js';
 import Local_Armazenamento from '../services/Local_Armazenamento';
+import JsonExcel from 'vue-json-excel';
+import Vue from 'vue';
+Vue.component('downloadExcel', JsonExcel)
 
   export default {
     data: () => ({
       titulo: 'Material',
       search: '',
       date: new Date().toISOString().substr(0, 10),
+      data_now: 'Data: '+ new Date().toISOString().substr(0, 10),
       menu: false,
       modal: false,
       menu2: false,
@@ -230,6 +249,17 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
         descricao: ""
       },
       addedItems: {},
+      json_fields: {
+                    'ID Material': 'id_material',
+                    'Cod Barra': 'cod_barra',
+                    'Descricao': 'descricao',
+                    'Un Medida': 'un_medida.id_un_medida',
+                    'Estoque Atual': 'estoque_atual',
+                    'Estoque Minimo': 'estoque_minimo',
+                    'Fabricante': 'fabricante.nome_fantasia',
+                    'Local': 'local.id_local',
+                    'Grupo Material': 'grupo_material.descricao',
+                },
     }),
 
     computed: {

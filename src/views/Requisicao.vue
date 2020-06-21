@@ -60,6 +60,7 @@
                               v-model="date"
                               label="Picker in menu"
                               v-on="on"
+                              disabled
                             ></v-text-field>
                           </template>
                           <v-date-picker v-model="date" no-title scrollable>
@@ -70,7 +71,7 @@
                         </v-menu>
                       </v-col>
                       <v-col cols="12" sm="6" md="4">
-                        <v-text-field v-model="editedItem.funcionario.id_funcionario" label="Solicitante"></v-text-field>
+                        <v-text-field disabled v-model="editedItem.funcionario.id_funcionario" label="Solicitante"></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row v-if="editedIndex === -1">
@@ -87,7 +88,7 @@
                         <v-text-field v-model="editedItem.qtde" label="Qtde"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2" v-if="editedIndex === -1">
-                        <v-btn class="mx-2" fab dark small color="primary" @click="getMaterialById(editedItem)">
+                        <v-btn @click="getMaterialById(editedItem)" class="mx-2" fab dark small color="primary">
                           <v-icon dark>mdi-plus</v-icon>
                         </v-btn>
                       </v-col>
@@ -100,8 +101,9 @@
                             <th class="text-left">Código</th>
                             <th class="text-left">Nome</th>
                             <th class="text-left">Qtde</th>
-                            <th class="text-left">Qtde Atendida</th>
-                            <th class="text-left">Action</th>
+                            <th class="text-left">Qtde Atendida</th> <!-- Qtde Atendida via banco-->
+                            <th class="text-left">Atender</th> <!-- Qtde no patch-->
+                            <th class="text-left">Ação</th>
                           </tr>
                         </thead>
                         <tbody v-if="editedIndex === -1">
@@ -109,6 +111,7 @@
                            <td>{{ item.id_material }}</td>
                             <td>{{ item.descricao }}</td>
                             <td>{{ item.qtde }}</td>
+                            <td>-</td>
                             <td>-</td>
                             <td><v-icon small @click="deleteAddMaterial(item)">mdi-delete</v-icon></td>
                           </tr>
@@ -118,7 +121,8 @@
                             <td>{{ item.material.id_material }}</td>
                             <td>{{ item.material.descricao }}</td>
                             <td>{{ item.qtde }}</td>
-                            <td><v-text-field style="max-width: 50px;" v-model="item.qtde_atendida" label="Qtde Atendida"></v-text-field></td>
+                            <td>{{ item.qtde_atendida }}</td> <!-- Qtde Entregue -->
+                            <td><v-text-field v-if="item.qtde != item.qtde_atendida" type="number" style="max-width: 50px;" v-model="item.qtdeAtender"></v-text-field></td>
                             <td><v-icon small @click="deleteMaterial(item)">mdi-delete</v-icon></td>
                           </tr>
                         </tbody>
@@ -146,12 +150,12 @@
           >
             mdi-pencil
           </v-icon>
-          <v-icon
+          <!-- <v-icon
             small
             @click="deleteItem(item)"
           >
             mdi-delete
-          </v-icon>
+          </v-icon> -->
         </template>
       </v-data-table>
     </v-col>
@@ -184,7 +188,6 @@ var _ = require('lodash');
         },
         { text: 'Data', value: 'data' },
         { text: 'Solicitante', value: 'funcionario.nome' },
-        { text: 'Qtde', value: 'quantidade' },
         { text: 'Status', value: 'status' },
         { text: 'Ação', value: 'actions', sortable: false },
       ],
@@ -214,7 +217,7 @@ var _ = require('lodash');
 
     computed: {
       formTitle () {
-        return this.editedIndex === -1 ? 'Novo' : 'Editar'
+        return this.editedIndex === -1 ? 'Novo' : 'Atender'
       },
     },
 
@@ -230,6 +233,7 @@ var _ = require('lodash');
 
     methods: {
       async getRequisicoes() {
+        this.data = [];
         try {
           let resources = await Requisicao.DataService.getRequisicoes();
           console.log(resources);
@@ -252,19 +256,21 @@ var _ = require('lodash');
         this.dialog = true;
       },
 
-      deleteItem (item) {
-        const index = this.data.indexOf(item)
-        if (confirm('Deletar Item?')) {
-          try{
-              console.log(this.editedItem);
-              let response = Requisicao.DataService.deleteRequisicao();
-              this.data.splice(index, 1)
-              alert("Response: ", response);
-          } catch (err) {
-            alert(err);
-          }
-        }
-      },
+      // deleteItem (item) {
+      //   // const index = this.data.indexOf(item);
+      //   // this.data[this.indexndex];
+      //   console.log(item)
+      //   if (confirm('Deletar Item?')) {
+      //     try{
+      //         // console.log(this.editedItem);
+      //         let response = Requisicao.DataService.deleteRequisicao(item);
+              
+      //         alert("Response: ", response);
+      //     } catch (err) {
+      //       alert(err);
+      //     }
+      //   }
+      // },
 
       close () {
         this.dialog = false
@@ -280,8 +286,29 @@ var _ = require('lodash');
           try {
             Object.assign(this.data[this.editedIndex], this.editedItem);
             console.log(this.editedItem);
-            let response = Requisicao.DataService.updateRequisicao();
+// {
+//         "materiais":[
+//         		{
+//         		"id_material":2,
+//         		"qtde":11,
+//         		"qtde_atendida": 30
+//         		}
+//         	]
+// }
+            var aux = {};
+            aux.materiais = this.editedItem.requisicao_material;
+            console.log(aux);
+            aux.materiais.forEach(function(x){
+              x.id_material = x.material.id_material;
+              x.qtde = parseInt(x.qtdeAtender);
+              delete x.material;
+              console.log(x);
+            });
+            console.log(aux);
+            // return;
+            let response = Requisicao.DataService.updateRequisicao(this.editedItem, aux);
             alert("Response: ", response);
+            this.getRequisicoes();
           } catch(error) {
             alert(error);
           }
@@ -306,7 +333,7 @@ var _ = require('lodash');
             
             alert("Response: ", response);
 
-            this.getRequisicoes()
+            this.getRequisicoes();
           } catch(error) {
             alert(error);
             console.log(error);

@@ -10,6 +10,7 @@ import Inventario from './views/Inventario.vue';
 import Local_Armazenamento from './views/Local_Armazenamento.vue';
 import Material from './views/Material.vue';
 import Solicitacao_Material from './views/Solicitacao_Material.vue';
+import Login from './views/Login.vue';
 
 Vue.use(VueRouter);
 
@@ -59,6 +60,11 @@ export default new VueRouter({
             path: '/solicitacaoMaterial',
             name: 'solicitacaoMaterial',
             component: Solicitacao_Material
+        },
+        {
+            path: '/login',
+            name: 'login',
+            component: Login
         },
     ]
 });

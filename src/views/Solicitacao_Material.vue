@@ -15,6 +15,15 @@
           max-size="300px"
         ></v-text-field>
       </v-col>
+                <download-excel
+            :data = "this.data"
+            :footer = "this.data_now"
+            :header = "this.data_now"
+            >
+            <v-btn class="ma-2" color="success" dark>
+              <v-icon dark>mdi-download</v-icon>
+            </v-btn>
+          </download-excel>
       <v-data-table
         :headers="headers"
         :items="data"
@@ -150,6 +159,9 @@
 <script>
 // import Cards from '../components/Cards';
 import Solicitacao_Material from '../services/Solicitacao_Material';
+import JsonExcel from 'vue-json-excel';
+import Vue from 'vue';
+Vue.component('downloadExcel', JsonExcel);
 
   export default {
 
@@ -169,11 +181,10 @@ import Solicitacao_Material from '../services/Solicitacao_Material';
           text: 'ID Solicitação',
           align: 'start',
           sortable: false,
-          value: 'idSolicitacao',
+          value: 'id_solicitacao',
         },
         { text: 'Data', value: 'data' },
-        { text: 'Solicitante', value: 'solicitante' },
-        { text: 'Qtde', value: 'quantidade' },
+        { text: 'Solicitante', value: 'funcionario.nome' },
         { text: 'Status', value: 'status' },
         { text: 'Ação', value: 'actions', sortable: false },
       ],
@@ -211,8 +222,16 @@ import Solicitacao_Material from '../services/Solicitacao_Material';
       try {
         // const resources = await SystemManagement.TaskService.getAlltickets()
         let resources = await Solicitacao_Material.DataService.getSolicitacoes();
-        console.log(resources);
-        this.data = resources;
+        console.log(resources.data);
+        this.data = resources.data;
+
+        this.data.forEach(function(x) {
+          // console.log(x);
+          if(x.data) {
+            var d = new Date(x.data);
+            x.data = d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear();
+          }
+        });
       } catch(error) {
         console.log(error);
       }

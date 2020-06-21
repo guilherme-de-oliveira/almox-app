@@ -1,26 +1,8 @@
-// import axios from 'axios';
-const axios = require('axios');
-
-// import mockData from './mock-data.json';
-const url = 'http://almoxarifado-tg.sa-east-1.elasticbeanstalk.com/solicitacao/';
-
-// class TaskService {
-//     static getAllTickets() {
-//         return new Promise(async (resolve, reject) => {
-//             try {
-//                 // const res = await axios.get(`${url}system-management/ticket/`);
-//                 const res = mockData.fabricantes;
-//                 console.log(res);
-//                 resolve (res.data);
-//             } catch(err) {
-//                 reject(err)
-//             }
-//         })
-//     }
-// }
+import axios from 'axios';
+const url = 'http://almoxarifado-tg.sa-east-1.elasticbeanstalk.com/inventario';
 
 class DataService {
-    static getSolicitacoes() {
+    static getInventario() {
         return new Promise( (resolve, reject) => { //retirei o ASYNC
             try {
                 const res = axios.get(url);
@@ -32,18 +14,22 @@ class DataService {
         })
     }
 
-    static setSolicitacao() {
+    static setInventario(data) {
+        console.log(data);
         return new Promise((resolve, reject) => {
             try {
-                const res = "Cadastrado!";
+                const res = axios.post(url, data);
+                console.log(res);
+                // const res = "Cadastrado!";
                 resolve (res);
             } catch(err) {
+                console.log(err)
                 reject(err)
             }
         })
     }
 
-    static updateSolicitacao() {
+    static updateInventario() {
         return new Promise((resolve, reject) => {
             try {
                 const res = "Atualizado!";
@@ -54,7 +40,7 @@ class DataService {
         })
     }
 
-    static deleteSolicitacao() {
+    static deleteInventario() {
         return new Promise((resolve, reject) => {
             try {
                 const res = "Deletado!";
