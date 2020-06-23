@@ -162,14 +162,15 @@ export default {
 
       deleteItem (item) {
         const index = this.data.indexOf(item)
-        confirm('Deletar Item?');
-        try{
-            console.log(this.editedItem);
-            let response = Local_Armazenamento.DataService.deleteLocal();
-            this.data.splice(index, 1)
-            alert("Response: ", response);
-        } catch (err) {
-          alert(err);
+        if(confirm('Deletar Item?')){
+          try{
+              console.log(this.editedItem);
+              let response = Local_Armazenamento.DataService.deleteLocal();
+              this.data.splice(index, 1)
+              alert("Response: ", response);
+          } catch (err) {
+            alert(err);
+          }
         }
       },
 

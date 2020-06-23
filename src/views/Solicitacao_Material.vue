@@ -69,6 +69,7 @@
                               v-model="date"
                               label="Data"
                               v-on="on"
+                              disabled
                             ></v-text-field>
                           </template>
                           <v-date-picker v-model="date" no-title scrollable>
@@ -152,12 +153,6 @@
             @click="editItem(item)"
           >
             mdi-pencil
-          </v-icon>
-          <v-icon
-            small
-            @click="deleteItem(item)"
-          >
-            mdi-delete
           </v-icon>
         </template>
       </v-data-table>

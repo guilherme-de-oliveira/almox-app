@@ -74,10 +74,13 @@ class DataService {
         })
     }
 
-    static updateMaterial() {
+    static updateMaterial(data) {
+        console.log(data);
         return new Promise((resolve, reject) => {
             try {
-                const res = "Atualizado!";
+                
+                const res = axios.patch(url, data);
+                console.log(res);
                 resolve (res);
             } catch(err) {
                 reject(err)

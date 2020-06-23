@@ -275,19 +275,7 @@ Vue.component('downloadExcel', JsonExcel)
     },
 
     async mounted() {
-      try {
-        // const resources = await SystemManagement.TaskService.getAlltickets()
-        let resources = await Material.DataService.getMateriais();
-        console.log(resources.data);
-        this.data = resources.data;
-
-//arrumar
-        // let resources1 = await Fabricante.DataService.getFabricantes();
-        // this.fabricantes = resources1.data;
-        // console.log(resources1.data);
-      } catch(error) {
-        console.log(error);
-      }
+      this.getMateriais();
       this.getFabricantes();
       this.getLocais();
       this.getGrupos();
@@ -295,14 +283,38 @@ Vue.component('downloadExcel', JsonExcel)
     },
 
     methods: {
+      async getMateriais() {
+        try {
+          // const resources = await SystemManagement.TaskService.getAlltickets()
+          let resources = await Material.DataService.getMateriais();
+          console.log(resources.data);
+          this.data = resources.data;
+
+        } catch(error) {
+          console.log(error);
+        }
+      },
+
       save () {
         if (this.editedIndex > -1) {
           //Update Item
+          var aux = {};
+          aux.id = this.editedItem.id_material;
+          aux.id_un_medida = this.editedItem.id_un_medida;
+          aux.id_fabricante = this.editedItem.id_fabricante;
+          aux.id_local = this.editedItem.id_local;
+          aux.cod_barra = this.editedItem.cod_barra;
+          aux.custo = this.editedItem.custo;
+          aux.estoque_atual = this.editedItem.estoque_atual;
+          aux.estoque_minimo = this.editedItem.estoque_minimo;
+          aux.id_grupo_material = this.editedItem.id_grupo_material;
+          aux.descricao = this.editedItem.descricao;
           try {
             Object.assign(this.data[this.editedIndex], this.editedItem);
             console.log(this.editedItem);
-            let response = Material.DataService.updateMaterial();
+            let response = Material.DataService.updateMaterial(aux);
             alert("Response: ", response);
+            // location.reload();
           } catch(error) {
             alert(error);
           }
@@ -319,8 +331,10 @@ Vue.component('downloadExcel', JsonExcel)
           this.editedItem.estoque_minimo = parseInt(this.editedItem.estoque_minimo);
           try {
             let response = Material.DataService.setMaterial(this.editedItem);
-              response.then(function(valor) {
-              console.log(valor.statusText)
+            // this.data.push(this.editedItem);
+            response.then(function(valor) {
+              console.log(valor.statusText);
+              
               alert(valor.statusText);
             }).catch(function (err){
               alert(err);
@@ -328,6 +342,7 @@ Vue.component('downloadExcel', JsonExcel)
           } catch(error) {
             alert(error);
           }
+          location.reload();
         }
         this.close()
       },
@@ -382,12 +397,19 @@ Vue.component('downloadExcel', JsonExcel)
       },
 
       deleteItem (item) {
-        console.log(item);
+        
+              
+        // console.log(item);
         if (confirm('Deletar Item?')) {
           try{
+            const index = this.data.indexOf(item)
+            console.log(this.data)
             let response = Material.DataService.deleteMaterial(item);
+            console.log(this.data)
+            this.data.splice(index, 1);
             response.then(function(valor) {
-              console.log(valor.statusText)
+              console.log(valor.statusText);
+
               alert(valor.statusText);
             }).catch(function (err){
               alert(err);
