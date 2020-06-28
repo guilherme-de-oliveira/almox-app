@@ -19,7 +19,8 @@
         :headers="headers"
         :items="data"
         :search="search"
-        sort-by="calories"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
         class="elevation-1"
       >
         <template v-slot:top>
@@ -42,7 +43,10 @@
                 <v-card-text>
                   <v-container>
                     <v-row>
-                      <v-col cols="12" sm="6" md="5">
+                      <v-col cols="12" sm="6" md="5" v-if="editedIndex === -1">
+                        <v-text-field v-model="editedItem.cnpj" label="CNPJ"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="5" v-else>
                         <v-text-field v-model="editedItem.cnpj" label="CNPJ" disabled></v-text-field>
                       </v-col>
                     </v-row>
@@ -103,8 +107,10 @@ import Fabricante from '../services/Fabricante.js';
   export default {
     data: () => ({
       titulo: 'Fabricante',
+      sortBy: 'nome_fantasia',
+      sortDesc: false,
       search: '',
-            date: new Date().toISOString().substr(0, 10),
+      date: new Date().toISOString().substr(0, 10),
       menu: false,
       modal: false,
       menu2: false,
@@ -113,7 +119,7 @@ import Fabricante from '../services/Fabricante.js';
         {
           text: 'CNPJ',
           align: 'start',
-          sortable: false,
+          sortable: true,
           value: 'cnpj',
         },
         { text: 'Nome', value: 'nome_fantasia' },

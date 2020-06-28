@@ -99,7 +99,7 @@
 
         solicitacaoMaterial: {
           action: '/solicitacaoMaterial',
-          cabecalho: 'Solicitaçao de Material',
+          cabecalho: 'Solicitação de Compra',
           descritivo: 'Greyhound divisely hello coldly fonwderfully',
           tipo: 'Gerenciar',
           icone: 'mdi-book-open',

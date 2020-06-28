@@ -19,7 +19,8 @@
         :headers="headers"
         :items="data"
         :search="search"
-        sort-by="calories"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
         class="elevation-1"
       >
         <template v-slot:top>
@@ -94,6 +95,8 @@ import Grupo_Material from '../services/Grupo_Material.js';
   export default {
     data: () => ({
       titulo: 'Grupo de Materiais',
+      sortBy: 'descricao',
+      sortDesc: false,
       search: '',
       menu: false,
       modal: false,

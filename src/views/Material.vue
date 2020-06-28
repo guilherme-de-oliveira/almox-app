@@ -34,7 +34,8 @@
         :headers="headers"
         :items="data"
         :search="search"
-        sort-by="calories"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
         class="elevation-1"
       >
         <template v-slot:top>
@@ -77,7 +78,7 @@
                       <v-col class="d-flex" cols="12" sm="4">
                         <v-select
                           :items="locais"
-                          item-text="id_local"
+                          item-text="corredor"
                           item-value="id_local"
                           label="Local"
                           v-model="local.id_local"
@@ -99,11 +100,19 @@
                           <th class="text-left">Estoque</th>
                         </tr>
                       </thead>
-                      <v-col cols="12" sm="6" md="4">
+                      <!-- Estoque Atual -->
+                      <v-col cols="12" sm="6" md="4" v-if="editedIndex === -1">
                         <v-text-field type="number" v-model="editedItem.estoque_atual" label="Atual"></v-text-field>
                       </v-col>
-                      <v-col cols="12" sm="6" md="4">
+                      <v-col cols="12" sm="6" md="4" v-else>
+                        <v-text-field type="number" v-model="editedItem.estoque_atual" label="Atual" disabled></v-text-field>
+                      </v-col>
+                      <!-- Estoque Minimo -->
+                      <v-col cols="12" sm="6" md="4" v-if="editedIndex === -1">
                         <v-text-field type="number" v-model="editedItem.estoque_minimo" label="Mínimo"></v-text-field>
+                      </v-col>
+                      <v-col cols="12" sm="6" md="4" v-else>
+                        <v-text-field type="number" v-model="editedItem.estoque_minimo" label="Mínimo" disabled></v-text-field>
                       </v-col>
                     </v-row>
                     <v-row>
@@ -193,6 +202,8 @@ Vue.component('downloadExcel', JsonExcel)
   export default {
     data: () => ({
       titulo: 'Material',
+      sortBy: 'id_material',
+      sortDesc: true,
       search: '',
       date: new Date().toISOString().substr(0, 10),
       data_now: 'Data: '+ new Date().toISOString().substr(0, 10),
@@ -213,14 +224,14 @@ Vue.component('downloadExcel', JsonExcel)
         {
           text: 'ID Material',
           align: 'start',
-          sortable: false,
+          sortable: true,
           value: 'id_material',
         },
         { text: 'Descrição', value: 'descricao' },        
         { text: 'Estoque', value: 'estoque_atual' },
         { text: 'Estoque Min.', value: 'estoque_minimo' },
         { text: 'Un Medida', value: 'id_un_medida' },
-        { text: 'Local', value: 'id_local' },
+        { text: 'Local', value: 'local.corredor' },
         { text: 'Ação', value: 'actions', sortable: false },
       ],
       editedIndex: -1,

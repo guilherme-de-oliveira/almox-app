@@ -28,7 +28,8 @@
         :headers="headers"
         :items="data"
         :search="search"
-        sort-by="calories"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
         class="elevation-1"
       >
         <template v-slot:top>
@@ -42,7 +43,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on">+ Novo</v-btn>
+                <v-btn color="primary" dark class="mb-2" v-on="on" @click="getMateriais">+ Novo</v-btn>
               </template>
               <v-card>
                 <v-card-title>
@@ -87,11 +88,24 @@
                       <span>Item</span>
                     </v-row>
                     <v-row>
-                      <v-col cols="12" sm="6" md="4">
+                      <!-- <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.id_material" label="ID Material"></v-text-field>
+                      </v-col> -->
+                      <v-col cols="12" sm="6" md="6">
+                        <v-autocomplete
+                          v-model="selectMaterial"
+                          :loading="loading"
+                          :items="items"
+                          item-text="descricao"
+                          item-value="id_material"
+                          :search-input.sync="searchMaterial"
+                          hide-no-data
+                          hide-details
+                          label="Nome">
+                        </v-autocomplete>
                       </v-col>
                       <v-col cols="12" sm="6" md="2">
-                        <v-text-field v-model="editedItem.qtde" label="Qtde"></v-text-field>
+                        <v-text-field type="number" v-model="editedItem.qtde" label="Qtde"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2" v-if="editedIndex === -1">
                         <v-btn @click="getMaterialById(editedItem)" class="mx-2" fab dark small color="primary">
@@ -166,12 +180,21 @@ import Solicitacao_Material from '../services/Solicitacao_Material';
 import Material from '../services/Material';
 import JsonExcel from 'vue-json-excel';
 import Vue from 'vue';
+var _ = require('lodash');
+
 Vue.component('downloadExcel', JsonExcel);
 
   export default {
     data: () => ({
       titulo: 'Solicitação de Compra',
+      sortBy: 'id_solicitacao',
+      sortDesc: true,
       search: '',
+      loading: false,
+      searchMateriais: [],
+      items: [],
+      searchMaterial: null,
+      selectMaterial: null,
       date: new Date().toISOString().substr(0, 10),
       date_now: new Date().toISOString().substr(0, 10),
       menu: false,
@@ -182,7 +205,7 @@ Vue.component('downloadExcel', JsonExcel);
         {
           text: 'ID Solicitação',
           align: 'start',
-          sortable: false,
+          sortable: true,
           value: 'id_solicitacao',
         },
         { text: 'Data', value: 'data' },
@@ -218,6 +241,11 @@ Vue.component('downloadExcel', JsonExcel);
       dialog (val) {
         val || this.close()
       },
+
+      search (val) {
+        console.log(val)
+        val && val !== this.selectMaterial && this.querySelections(val)
+      },
     },
 
     async mounted() {
@@ -243,6 +271,18 @@ Vue.component('downloadExcel', JsonExcel);
         }
       },
 
+      querySelections (v) {
+        console.log(v)
+        this.loading = true
+        // Simulated ajax query
+        setTimeout(() => {
+          this.items = this.searchMateriais.filter(e => {
+            return (e.descricao || '').toLowerCase().indexOf((v || '').toLowerCase()) > -1
+          })
+          this.loading = false
+        }, 500)
+      },
+
       editItem (item) {
         this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
@@ -253,6 +293,7 @@ Vue.component('downloadExcel', JsonExcel);
         this.dialog = false
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
+           this.addedItems = []
           this.editedIndex = -1
         })
       },
@@ -312,58 +353,55 @@ Vue.component('downloadExcel', JsonExcel);
 
       addItems(item) {
         console.log(item)
-
+        var test  = _.find(this.items, ['id_material', this.selectMaterial]);
+console.log(test);
         this.addedItems.push(this.editedItem);
         this.editedItem = {};
         console.log(this.addedItems);
       },
 
+      async getMateriais() {
+        await Material.DataService.getMateriais().then((resources) => {
+          console.log(resources);
+          this.items = resources.data; 
+        });
+      },
+
       async getMaterialById(item) {
-        console.log(item);
-        // try {
-          // const resources = await SystemManagement.TaskService.getAlltickets()
-          // let resources = ''
-          await Material.DataService.getMaterialById(item).then((resources) => {
+        // console.log(item);
+        var test = this.addedItems.filter(x => x.id_material == this.selectMaterial)
+        if (test.length == 0){
+          if (item.qtde > 0) {
+          // console.log(this.items);
+          var resources  = _.find(this.items, ['id_material', this.selectMaterial]);
+
+          console.log(resources)
           var array = {};
-          array.id_material = resources.data.id_material;
-          array.descricao = resources.data.descricao;
-          array.estoque_atual = resources.data.estoque_atual;
-          array.estoque_minimo = resources.data.estoque_minimo;
+          array.id_material = resources.id_material;
+          array.descricao = resources.descricao;
+          array.estoque_atual = resources.estoque_atual;
+          array.estoque_minimo = resources.estoque_minimo;
           array.qtde = item.qtde;
 
-          // console.log(this.array);
-          // console.log(resources.data);
-          // resources.data.quantidade = item.quantidade;
-          resources.data.qtde = item.qtde;
-          // this.addedItems = resources.data;
+          resources.qtde = item.qtde;
+
           console.log(item)
-          // this.sendItems.id_funcionario = item.funcionario.id_funcionario; pq nao tem id_func em sendItems
-          // this.sendItems.data = this.editedItem.data;
-          // this.addedItems.push(resources.data);
-          // if(!this.addedItems.materiais) {
-          //   Object.defineProperty(this.addedItems, 'materiais', { value: resources.data, writable: true, });
-            
-          // } else {
-            console.log(this.addedItems);
-            this.addedItems.push(array); 
-            
-          //}// var tes=this.addedItems.indexOf(item.id_material);
-          
-          // this.editedItem = {};
-          this.editedItem = Object.assign({}, this.defaultItem)
-        // _.remove(this.array, function(x) {
-        //   return x === '__ob__';
-        // });
-        // Object.defineProperty(this.addedItems, 'materiais', { value: resources.data });
-        this.sendItems.materiais= this.addedItems;
+
           console.log(this.addedItems);
-        // } catch(error) {
-        //   console.log(error);
-        //   alert('Material não encontrado! Insira um Código de Material Válido!');
-        // }
-          });
-        },
-      }
+          this.addedItems.push(array); 
+          this.editedItem = Object.assign({}, this.defaultItem)
+
+          this.sendItems.materiais= this.addedItems;
+          console.log(this.addedItems);
+          } else {
+            alert('Quantidade deve ser maior que 0!')
+          }
+        } else {
+          alert('Item já existente na lista!')
+        }
+        
+      },
+    }
   } 
 </script>
 <style>

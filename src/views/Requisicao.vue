@@ -19,9 +19,13 @@
         :headers="headers"
         :items="data"
         :search="search"
-        sort-by="calories"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
         class="elevation-1"
       >
+       <template v-slot:item.status="{ item }">
+          <v-chip :color="getColor(item.status)" dark>{{ item.status }}</v-chip>
+        </template>
         <template v-slot:top>
           <v-toolbar flat color="#F5F5F5">
             <v-toolbar-title>Requisições</v-toolbar-title>
@@ -33,7 +37,7 @@
             <v-spacer></v-spacer>
             <v-dialog v-model="dialog" max-width="500px">
               <template v-slot:activator="{ on }">
-                <v-btn color="primary" dark class="mb-2" v-on="on">+ Novo</v-btn>
+                <v-btn color="primary" dark class="mb-2" v-on="on" @click="getMateriais">+ Novo</v-btn>
               </template>
               <v-card>
                 <v-card-title>
@@ -81,11 +85,24 @@
                       <!-- <v-col cols="12" sm="6" md="4">
                         <v-text-field v-model="editedItem.id_requisicao" label="ID Requisição" disabled></v-text-field>
                       </v-col> -->
-                      <v-col cols="12" sm="6" md="6">
+                      <!-- <v-col cols="12" sm="6" md="6">
                         <v-text-field v-model="editedItem.id_material" label="Cod Material"></v-text-field>
+                      </v-col> -->
+                      <v-col cols="12" sm="6" md="6">
+                        <v-autocomplete
+                          v-model="selectMaterial"
+                          :loading="loading"
+                          :items="items"
+                          item-text="descricao"
+                          item-value="id_material"
+                          :search-input.sync="searchMaterial"
+                          hide-no-data
+                          hide-details
+                          label="Nome">
+                        </v-autocomplete>
                       </v-col>
                       <v-col cols="12" sm="6" md="2">
-                        <v-text-field v-model="editedItem.qtde" label="Qtde"></v-text-field>
+                        <v-text-field type="number" v-model="editedItem.qtde" label="Qtde"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2" v-if="editedIndex === -1">
                         <v-btn @click="getMaterialById(editedItem)" class="mx-2" fab dark small color="primary">
@@ -100,6 +117,7 @@
                           <tr>
                             <th class="text-left">ID</th>
                             <th class="text-left">Nome</th>
+                            <th class="text-left">Estoque</th>
                             <th class="text-left">Qtde</th>
                             <th class="text-left">Qtde Atendida</th> <!-- Qtde Atendida via banco-->
                             <th class="text-left">Atender</th> <!-- Qtde no patch-->
@@ -110,6 +128,7 @@
                           <tr v-for="item in addedItems" :key="item.id_material">
                            <td>{{ item.id_material }}</td>
                             <td>{{ item.descricao }}</td>
+                            <td>{{ item.estoque_atual }} </td>
                             <td>{{ item.qtde }}</td>
                             <td>-</td>
                             <td>-</td>
@@ -120,6 +139,7 @@
                            <tr v-for="item in editedItem.requisicao_material" :key="item.id_material">
                             <td>{{ item.material.id_material }}</td>
                             <td>{{ item.material.descricao }}</td>
+                            <td>{{ item.material.estoque_atual }}</td>
                             <td>{{ item.qtde }}</td>
                             <td>{{ item.qtde_atendida }}</td> <!-- Qtde Entregue -->
                             <td><v-text-field v-if="item.qtde != item.qtde_atendida" type="number" style="max-width: 50px;" v-model="item.qtdeAtender"></v-text-field></td>
@@ -172,7 +192,14 @@ var _ = require('lodash');
   export default {
     data: () => ({
       titulo: 'Requisição de Materiais',
+      sortBy: 'id_requisicao',
+      sortDesc: true,
       search: '',
+      loading: false,
+      searchMateriais: [],
+      items: [],
+      searchMaterial: null,
+      selectMaterial: null,
       date: new Date().toISOString().substr(0, 10),
       menu: false,
       modal: false,
@@ -183,7 +210,7 @@ var _ = require('lodash');
         {
           text: 'ID requisição',
           align: 'start',
-          sortable: false,
+          sortable: true,
           value: 'id_requisicao',
         },
         { text: 'Data', value: 'data' },
@@ -249,13 +276,20 @@ var _ = require('lodash');
           console.log(error);
         }
       },
+
       editItem (item) {
         this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
         console.log(this.editedItem);
         this.dialog = true;
       },
-
+  
+      async getMateriais() {
+        await Material.DataService.getMateriais().then((resources) => {
+          console.log(resources);
+          this.items = resources.data; 
+        });
+      },
       // deleteItem (item) {
       //   // const index = this.data.indexOf(item);
       //   // this.data[this.indexndex];
@@ -276,6 +310,7 @@ var _ = require('lodash');
         this.dialog = false
         this.$nextTick(() => {
           this.editedItem = Object.assign({}, this.defaultItem)
+          this.addedItems = []
           this.editedIndex = -1
         })
       },
@@ -389,44 +424,59 @@ var _ = require('lodash');
         // try {
           // const resources = await SystemManagement.TaskService.getAlltickets()
           // let resources = ''
-          await Material.DataService.getMaterialById(item).then((resources) => {
+        var test = this.addedItems.filter(x => x.id_material == this.selectMaterial)
+        if (test.length == 0){
+          if (item.qtde > 0) {
+            // await Material.DataService.getMaterialById(item).then((resources) => {
+            var resources  = _.find(this.items, ['id_material', this.selectMaterial]);
             console.log(resources);
-          var array = {};
-          array.id_material = resources.data.id_material;
-          array.descricao = resources.data.descricao;
-          array.qtde = item.qtde;
+            var array = {};
+            array.id_material = resources.id_material;
+            array.descricao = resources.descricao;
+            array.qtde = item.qtde;
+            array.estoque_atual = resources.estoque_atual;
 
-          console.log(this.array);
-          console.log(resources.data);
-          // resources.data.quantidade = item.quantidade;
-          resources.data.qtde = item.qtde;
-          // this.addedItems = resources.data;
-          this.sendItems.id_funcionario = this.editedItem.funcionario.id_funcionario;
-          // this.sendItems.data = this.editedItem.data;
-          // this.addedItems.push(resources.data);
-          // if(!this.addedItems.materiais) {
-          //   Object.defineProperty(this.addedItems, 'materiais', { value: resources.data, writable: true, });
+            console.log(this.array);
+            // console.log(resources.data);
+            // resources.data.quantidade = item.quantidade;
+            resources.qtde = item.qtde;
+            // this.addedItems = resources.data;
+            this.sendItems.id_funcionario = this.editedItem.funcionario.id_funcionario;
+            // this.sendItems.data = this.editedItem.data;
+            // this.addedItems.push(resources.data);
+            // if(!this.addedItems.materiais) {
+            //   Object.defineProperty(this.addedItems, 'materiais', { value: resources.data, writable: true, });
+              
+            // } else {
+              console.log(this.addedItems);
+              this.addedItems.push(array); 
+              // Object.defineProperty(this.addedItems, 'materiais', { value: resources.data });
+            //}// var tes=this.addedItems.indexOf(item.id_material);
             
-          // } else {
+            // this.editedItem = {};
+            this.editedItem = Object.assign({}, this.defaultItem)
+          // _.remove(this.array, function(x) {
+          //   return x === '__ob__';
+          // });
+          this.sendItems.materiais= this.addedItems;
             console.log(this.addedItems);
-            this.addedItems.push(array); 
-            // Object.defineProperty(this.addedItems, 'materiais', { value: resources.data });
-          //}// var tes=this.addedItems.indexOf(item.id_material);
-          
-          // this.editedItem = {};
-          this.editedItem = Object.assign({}, this.defaultItem)
-        // _.remove(this.array, function(x) {
-        //   return x === '__ob__';
-        // });
-        this.sendItems.materiais= this.addedItems;
-          console.log(this.addedItems);
-        // } catch(error) {
-        //   console.log(error);
-        //   alert('Material não encontrado! Insira um Código de Material Válido!');
-        // }
-          });
-          
-      }
+          // } catch(error) {
+          //   console.log(error);
+          //   alert('Material não encontrado! Insira um Código de Material Válido!');
+          // }
+            // });
+          } else {
+            alert('Quantidade deve ser maior que 0!')
+          }
+        } else {
+          alert('Item já existente na lista!')
+        }
+      },
+      getColor (item) {
+        if (item == 'Pendente') return 'red'
+        else if (item == 'Parcialmente Atendido') return 'orange'
+        else return 'green'
+      },
     }
   } 
 </script>

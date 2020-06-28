@@ -19,7 +19,8 @@
         :headers="headers"
         :items="data"
         :search="search"
-        sort-by="calories"
+        :sort-by.sync="sortBy"
+        :sort-desc.sync="sortDesc"
         class="elevation-1"
       >
         <template v-slot:top>
@@ -100,6 +101,8 @@ import Local_Armazenamento from '../services/Local_Armazenamento';
 export default {
     data: () => ({
       titulo: 'Local de Armazenamento',
+      sortBy: 'corredor',
+      sortDesc: true,
       search: '',
       date: new Date().toISOString().substr(0, 10),
       menu: false,
