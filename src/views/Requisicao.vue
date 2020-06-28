@@ -35,7 +35,7 @@
               vertical
             ></v-divider>
             <v-spacer></v-spacer>
-            <v-dialog v-model="dialog" max-width="500px">
+            <v-dialog v-model="dialog" width="600px">
               <template v-slot:activator="{ on }">
                 <v-btn color="primary" dark class="mb-2" v-on="on" @click="getMateriais">+ Novo</v-btn>
               </template>
@@ -102,7 +102,7 @@
                         </v-autocomplete>
                       </v-col>
                       <v-col cols="12" sm="6" md="2">
-                        <v-text-field type="number" v-model="editedItem.qtde" label="Qtde"></v-text-field>
+                        <v-text-field type="number" max="20" min="1" v-model="editedItem.qtde" label="Qtde"></v-text-field>
                       </v-col>
                       <v-col cols="12" sm="6" md="2" v-if="editedIndex === -1">
                         <v-btn @click="getMaterialById(editedItem)" class="mx-2" fab dark small color="primary">
@@ -111,12 +111,12 @@
                       </v-col>
                     </v-row>
                   <v-row>
-                    <v-simple-table dense>
+                    <v-simple-table :dense="true" :fixed-header="true" :height="200">
                       <template v-slot:default>
                         <thead>
                           <tr>
                             <th class="text-left">ID</th>
-                            <th class="text-left">Nome</th>
+                            <th class="text-left" width="145px">Nome</th>
                             <th class="text-left">Estoque</th>
                             <th class="text-left">Qtde</th>
                             <th class="text-left">Qtde Atendida</th> <!-- Qtde Atendida via banco-->
@@ -126,7 +126,7 @@
                         </thead>
                         <tbody v-if="editedIndex === -1">
                           <tr v-for="item in addedItems" :key="item.id_material">
-                           <td>{{ item.id_material }}</td>
+                            <td>{{ item.id_material }}</td>
                             <td>{{ item.descricao }}</td>
                             <td>{{ item.estoque_atual }} </td>
                             <td>{{ item.qtde }}</td>
@@ -142,11 +142,10 @@
                             <td>{{ item.material.estoque_atual }}</td>
                             <td>{{ item.qtde }}</td>
                             <td>{{ item.qtde_atendida }}</td> <!-- Qtde Entregue -->
-                            <td><v-text-field v-if="item.qtde != item.qtde_atendida" type="number" style="max-width: 50px;" v-model="item.qtdeAtender"></v-text-field></td>
+                            <td><v-text-field v-if="item.qtde != item.qtde_atendida" height="20" :max="item.qtde - item.qtde_atendida" min="1" type="number" style="max-width: 50px;" v-model="item.qtdeAtender"></v-text-field></td>
                             <td><v-icon small @click="deleteMaterial(item)">mdi-delete</v-icon></td>
                           </tr>
                         </tbody>
-                        
                       </template>
                     </v-simple-table>
                   </v-row>
@@ -259,24 +258,6 @@ var _ = require('lodash');
     },
 
     methods: {
-      async getRequisicoes() {
-        this.data = [];
-        try {
-          let resources = await Requisicao.DataService.getRequisicoes();
-          console.log(resources);
-          this.data = resources.data;
-          this.data.forEach(function(x) {
-            console.log(x);
-            if(x.data) {
-              var d = new Date(x.data);
-              x.data = d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear();
-            }
-          });
-        } catch(error) {
-          console.log(error);
-        }
-      },
-
       editItem (item) {
         this.editedIndex = this.data.indexOf(item)
         this.editedItem = Object.assign({}, item)
@@ -321,15 +302,7 @@ var _ = require('lodash');
           try {
             Object.assign(this.data[this.editedIndex], this.editedItem);
             console.log(this.editedItem);
-// {
-//         "materiais":[
-//         		{
-//         		"id_material":2,
-//         		"qtde":11,
-//         		"qtde_atendida": 30
-//         		}
-//         	]
-// }
+
             var aux = {};
             aux.materiais = this.editedItem.requisicao_material;
             console.log(aux);
@@ -374,6 +347,7 @@ var _ = require('lodash');
             console.log(error);
           }
         }
+        location.reload();
         this.close()
       },
 
@@ -472,6 +446,25 @@ var _ = require('lodash');
           alert('Item já existente na lista!')
         }
       },
+
+      async getRequisicoes() {
+        this.data = [];
+        try {
+          let resources = await Requisicao.DataService.getRequisicoes();
+          console.log(resources);
+          this.data = resources.data;
+          this.data.forEach(function(x) {
+            console.log(x);
+            if(x.data) {
+              var d = new Date(x.data);
+              x.data = d.getDate() + '/' + d.getMonth() + '/' + d.getFullYear();
+            }
+          });
+        } catch(error) {
+          console.log(error);
+        }
+      },
+
       getColor (item) {
         if (item == 'Pendente') return 'red'
         else if (item == 'Parcialmente Atendido') return 'orange'

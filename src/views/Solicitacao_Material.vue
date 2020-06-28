@@ -114,12 +114,12 @@
                       </v-col>
                     </v-row>
                   <v-row>
-                    <v-simple-table dense>
+                    <v-simple-table dense :fixed-header="true" :height="200">
                       <template v-slot:default>
                         <thead>
                           <tr>
                             <th class="text-left">ID</th>
-                            <th class="text-left">Material</th>
+                            <th class="text-left" width="145px">Material</th>
                             <th class="text-left">Estoque</th>
                             <th class="text-left">Est. Mínimo</th>
                             <th class="text-left">Qtde</th>

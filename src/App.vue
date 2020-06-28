@@ -52,7 +52,7 @@
     },
     data: () => ({
       drawer: null,
-      user: 'Guilherme de Oliveira',
+      user: 'Guilherme Oliveira',
       data: {
         fabricante: {
           action: '/fabricante',
